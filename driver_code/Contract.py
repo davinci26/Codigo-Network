@@ -1,6 +1,7 @@
 from solc import compile_files
 from web3.contract import ConciseContract
 
+
 class Contract:
 
     def __init__(self, directory_, contract_name_,m_web3,address_ = None, verbose = True):
