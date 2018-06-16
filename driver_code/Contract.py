@@ -4,7 +4,7 @@ from web3.contract import ConciseContract
 
 class Contract:
 
-    def __init__(self, directory_, contract_name_,m_web3,address_ = None, verbose = True):
+    def __init__(self, directory_, contract_name_,m_web3,verbose = True,address_ = None):
         if verbose:
             print("========== Initializing {} ==========".format(contract_name_))
         if m_web3 == None:

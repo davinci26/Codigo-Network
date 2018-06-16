@@ -31,6 +31,12 @@ class Blockchain_admin:
             self.Online_Acc_Pwd = Online_Acc_Pwd
             self.__unlock_account()
     
+
+    def get_all_accounts(self):
+        if not self.local:
+            raise ValueError("Cannot use this function for non local Web3")
+        return self.m_web3.eth.accounts
+
     def get_account(self,id = 0):
         if self.local:
             return self.m_web3.eth.accounts[id]

@@ -6,7 +6,7 @@ With the number of Internet of Things (IoT) devices exponentially increasing, di
 
 ## Project Structure ##
 
-- Contracts: Smart contracts used to encapsulate the business logic of the project. The contracts include, a firmware upload/download new firmware and a decentralized trust metric calculator.
+- Contracts: Smart contracts used to encapsulate the business logic of the project. The contracts include, a firmware    repository and a decentralized trust metric calculator.
 - Driver code: Python scripts to emulate developers, IoT devices and seeders.
 - Unit Testing: Pre-set experiments to model the performance of the system.
 
@@ -18,6 +18,8 @@ With the number of Internet of Things (IoT) devices exponentially increasing, di
  - [Ganache-cli](https://github.com/trufflesuite/ganache-cli)
  
  Smart contract libraries used in the project will be added to the contracts folder.
+
+ This project is merely a combination of existing solutions developed by the open source community. Thus it would be disrespectful not to thank the developing teams of the projects used in the dependencies.
 
 ## How to contribute ##
 Any comments/suggestions/improvements are highly appreciated. However, until the project is submitted for grading no pull requests will be accepted.

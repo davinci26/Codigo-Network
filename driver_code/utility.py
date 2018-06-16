@@ -25,7 +25,15 @@ def __hash_utf8(msg):
 # Cryptographicaly sign the hash of message.
 # The signature algorithm that will be used is one used in Ethereum 
 
-def sign_firmware(self,msg_hash):
+def sign_firmware(msg_hash):
     #TODO: Implement a function that signs the firmware hash
     return "Not Implemented"
-    
+
+
+def generate_eth_pk(number):
+    from eth_account import Account
+    pk_list = []
+    for i in range(0,number):
+        acct = Account.create(__generate_random_txt(30)+ str(i))
+        pk_list.append(acct.address)
+    return pk_list

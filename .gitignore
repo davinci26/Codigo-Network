@@ -1,5 +1,7 @@
 # Project specific
 Reports/meeting_notes
+examples/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 driver_code/__pycache__/
