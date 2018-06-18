@@ -1,5 +1,4 @@
-contract web_of_trust {
-    
+contract Web_Of_Trust {
     
     // Avoid storing duplicates in the list
     mapping (address => mapping(address => bool)) trust_lookup;
@@ -12,25 +11,21 @@ contract web_of_trust {
     struct map_struct {
         mapping(address => bool) visited;
     }
-    // ===== To delete =======
 
+    // ===== To delete =======
     function addr_to_string(address x) internal{
         bytes memory b = new bytes(20);
         for (uint i = 0; i < 20; i++)
             b[i] = byte(uint8(uint(x) / (2**(8*(19 - i)))));
         last_sender = string(b);
     }
-
     string last_sender = "test";
-
-    function last_target() public returns (string){
+    function last_target() public view returns (string){
         return last_sender;
     }
-
-    function get_from_mapping(address t) public returns (address){
+    function get_from_mapping(address t) public view returns (address){
         return trust_graph[t][0];
     }
-
     // ============
 
     // Senders trusts a target address
@@ -43,8 +38,6 @@ contract web_of_trust {
     }
 
     function hop_to_target(address target /*uint8 threshold*/) public returns (int256){
-        //addr_to_string(target); // Delete this line after debugging 
-        last_sender = "yolo";
         map_struct storage ss;
         bool found;
         int256 hops;
@@ -54,6 +47,8 @@ contract web_of_trust {
         else
             return -1;
     }
+
+    // TODO: Calculate Big O notation for the algorithm and write documentation :)
 
     function hop_internal_rec(address origin, address target, map_struct storage ss /*uint8 threshold*/) internal returns (int256,bool){
         ss.visited[origin] = true;
@@ -80,13 +75,6 @@ contract web_of_trust {
         return (hops,found);
 
     }
-
-
-
-
-
-
-
 }
 
 

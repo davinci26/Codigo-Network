@@ -11,7 +11,7 @@ m_web3 = blockchain_admin.getWeb3()
 primary_acc = blockchain_admin.get_account(0)
 
 # Initialize and deploy contract
-contract = Contract('contracts/webTrust.sol','web_of_trust',m_web3)
+contract = Contract('contracts/webTrust.sol','Web_Of_Trust',m_web3)
 contract.publish_contract(m_web3, primary_acc)
 
 def plt_endorse_trust(mode):

@@ -40,7 +40,7 @@ class TestTrust(unittest.TestCase):
     '''
     def test_calculate_trust_normal_case(self):
         # Initialize and deploy contract
-        contract = Contract('contracts/webTrust.sol','web_of_trust',m_web3,verbose=False)
+        contract = Contract('contracts/webTrust.sol','Web_Of_Trust',m_web3,verbose=False)
         contract.publish_contract(m_web3, blockchain_admin.get_account(0))
         # Add addresses
         self.add_single_address(blockchain_admin.get_account(0),blockchain_admin.get_account(1),contract)
@@ -55,7 +55,7 @@ class TestTrust(unittest.TestCase):
     '''
     def test_trust_multiple_hop(self):
         # Initialize and deploy contract
-        contract = Contract('contracts/webTrust.sol','web_of_trust',m_web3,verbose=False)
+        contract = Contract('contracts/webTrust.sol','Web_Of_Trust',m_web3,verbose=False)
         contract.publish_contract(m_web3, blockchain_admin.get_account(0))
         # Add addresses
         self.add_single_address(blockchain_admin.get_account(0),blockchain_admin.get_account(1), contract)
@@ -72,7 +72,7 @@ class TestTrust(unittest.TestCase):
     '''
     def test_calculate_trust_cyclical_case(self):
         # Initialize and deploy contract
-        contract = Contract('contracts/webTrust.sol','web_of_trust',m_web3,verbose=False)
+        contract = Contract('contracts/webTrust.sol','Web_Of_Trust',m_web3,verbose=False)
         contract.publish_contract(m_web3, blockchain_admin.get_account(0))
         # Add addresses
         self.add_single_address(blockchain_admin.get_account(0),blockchain_admin.get_account(1), contract)
@@ -89,7 +89,7 @@ class TestTrust(unittest.TestCase):
     '''
     def test_calculate_trust_competing_conn(self):
         # Initialize and deploy contract
-        contract = Contract('contracts/webTrust.sol','web_of_trust',m_web3,verbose=False)
+        contract = Contract('contracts/webTrust.sol','Web_Of_Trust',m_web3,verbose=False)
         contract.publish_contract(m_web3, blockchain_admin.get_account(0))
         # Add addresses
         for i in range(0,5):
@@ -101,7 +101,3 @@ class TestTrust(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    # tx_hash =contract.get_contract_instance().endorse_trust(blockchain_admin.get_account(1), transact={'from': blockchain_admin.get_account(0)})
-    # tx_hash =contract.get_contract_instance().endorse_trust(blockchain_admin.get_account(2), transact={'from': blockchain_admin.get_account(1)})
-    # trust = contract.get_contract_instance().hop_to_target(blockchain_admin.get_account(2))
-    # print(trust)
