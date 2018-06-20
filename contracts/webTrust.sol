@@ -50,7 +50,8 @@ contract Web_Of_Trust {
 
     // TODO: Calculate Big O notation for the algorithm and write documentation :)
 
-    function hop_internal_rec(address origin, address target, map_struct storage ss /*uint8 threshold*/) internal returns (int256,bool){
+    function hop_internal_rec(address origin, address target, map_struct storage ss /*uint8 threshold*/)
+            internal returns (int256,bool){
         ss.visited[origin] = true;
         if (origin == target)
             return (0,true);
@@ -71,9 +72,7 @@ contract Web_Of_Trust {
                 hops = curr_hops;
             }
         }
-  
         return (hops,found);
-
     }
 }
 

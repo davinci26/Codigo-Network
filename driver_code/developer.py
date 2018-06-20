@@ -2,7 +2,7 @@
 
 class Developer_Node:
 
-    def __init__(self):
+    def __init__(self, pk ):
         pass
     
     def add_firmware(self):

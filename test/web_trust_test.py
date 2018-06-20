@@ -1,8 +1,9 @@
-import unittest
-import time
+import sys
+sys.path.append("lib/")
 from Contract import *
 from bc_admin import *
-import utility as u
+import unittest
+import time
 
 blockchain_admin = Blockchain_admin(local=True)
 m_web3 = blockchain_admin.getWeb3()
@@ -19,20 +20,6 @@ class TestTrust(unittest.TestCase):
         tx_hash =contract.get_contract_instance().endorse_trust(target, transact={'from': origin})
         # Wait for transaction to be mined...
         m_web3.eth.waitForTransactionReceipt(tx_hash)
-
-    # def add_rand_addresses(self, tx_origin, number):
-    #     trusted_addr = u.generate_eth_pk(number)
-    #     for pk in trusted_addr:
-    #         self.add_single_address(tx_origin,pk)
-    #     return trusted_addr[:-1][0]
-    
-    # def add_all_known(self):
-    #     for acc in blockchain_admin.get_all_accounts():
-    #         for tx_origin in blockchain_admin.get_all_accounts():
-    #             if acc != tx_origin:
-    #                 self.add_single_address(tx_origin,acc)
-    #         return #TODO: CRITICAL, early return only the first acc allocates trust
-    
     '''
     Test Case 1 (Single Hop)
         Acc0 -> Acc1
@@ -98,6 +85,9 @@ class TestTrust(unittest.TestCase):
         # Calculate Trust
         trust = contract.get_contract_instance().hop_to_target(blockchain_admin.get_account(5))
         self.assertEqual(trust, 3)
+
+def test():
+    unittest.main()
 
 if __name__ == '__main__':
     unittest.main()

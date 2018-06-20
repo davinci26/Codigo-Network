@@ -2,8 +2,10 @@ pragma solidity ^0.4.23;
 pragma experimental ABIEncoderV2;
 
 import "./webTrust.sol";
+import "./PQ.sol";
 
 contract FirmwareRepo{
+
     Web_Of_Trust web_trust;
 
     struct Firmware {
@@ -96,12 +98,22 @@ contract FirmwareRepo{
         }
         return Firmware_Info(developed_firmware[device_type][most_trusted_dev][firmware_index],most_trusted_dev,max_trust);
     }
-
-    function get_top_firmwares(string device_type, bool stable) public returns (Firmware_Info[10]){
-        Firmware_Info[10] firmware_list;
+    
+    function get_top_firmwares(string device_type, bool stable)
+        public view returns (Firmware_Info[7]){
+        uint8 firmware_index = (stable) ? 0 : 1;
+        PQ pq;
+        for (uint256 i = 0; i < device_developers[device_type].length; i++ ){
+            int256 curr_trust = web_trust.hop_to_target(device_developers[device_type][i]);
+            pq.insert(curr_trust,device_developers[device_type][i]);
+        }
+        Firmware_Info[7] firmware_list;
+        for (uint8 k = 0;  i < 7; i++){
+            PQ.Node memory tmp = pq.get_specific_node(k);
+            firmware_list[i] = Firmware_Info(developed_firmware[device_type][tmp.value][firmware_index],tmp.value,tmp.key);
+        }
         return firmware_list;
     }
-
 
     function is_empty(string str) internal pure returns (bool) {
         // Source: https://ethereum.stackexchange.com/questions/11039/how-can-you-check-if-a-string-is-empty-in-solidity
