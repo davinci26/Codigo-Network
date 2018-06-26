@@ -41,7 +41,7 @@ class TestTrust(unittest.TestCase):
     '''
     Test Case 1 (Single Hop)
         Acc0 -> Acc1
-        Trust(Acc1,Acc2) == 1
+        Trust(Acc0,Acc1) == 1
     '''
     def test_calculate_trust_normal_case(self):
         # Initialize and deploy contract
@@ -50,7 +50,7 @@ class TestTrust(unittest.TestCase):
         # Add addresses
         self.add_single_address(blockchain_admin.get_account(0),blockchain_admin.get_account(1),contract)
         # Calculate Trust
-        trust = contract.get_consice_instance().hop_to_target(blockchain_admin.get_account(1))
+        trust = contract.get_consice_instance().hop_to_target(blockchain_admin.get_account(1),blockchain_admin.get_account(0))
         self.assertEqual(trust, 1)
 
     '''
@@ -66,14 +66,14 @@ class TestTrust(unittest.TestCase):
         self.add_single_address(blockchain_admin.get_account(0),blockchain_admin.get_account(1), contract)
         self.add_single_address(blockchain_admin.get_account(1),blockchain_admin.get_account(2),contract)
         # Calculate Trust
-        trust = contract.get_consice_instance().hop_to_target(blockchain_admin.get_account(2))
+        trust = contract.get_consice_instance().hop_to_target(blockchain_admin.get_account(2),blockchain_admin.get_account(0))
         self.assertEqual(trust, 2)
 
     '''
     Test Case 3 (Cyclical Case)
-        Acc1 -> Acc2
-        Acc2 -> Acc1
-        Trust(Acc1,Acc3) == -1
+        Acc0 -> Acc1
+        Acc1 -> Acc0
+        Trust(Acc0,Acc2) == -1
     '''
     def test_calculate_trust_cyclical_case(self):
         # Initialize and deploy contract
@@ -83,7 +83,7 @@ class TestTrust(unittest.TestCase):
         self.add_single_address(blockchain_admin.get_account(0),blockchain_admin.get_account(1), contract)
         self.add_single_address(blockchain_admin.get_account(1),blockchain_admin.get_account(0), contract)
         # Calculate Trust
-        trust = contract.get_consice_instance().hop_to_target(blockchain_admin.get_account(2))
+        trust = contract.get_consice_instance().hop_to_target(blockchain_admin.get_account(2),blockchain_admin.get_account(0))
         self.assertEqual(trust, -1)
     
     '''
@@ -101,11 +101,8 @@ class TestTrust(unittest.TestCase):
             self.add_single_address(blockchain_admin.get_account(i),blockchain_admin.get_account(i+1),contract)
         self.add_single_address(blockchain_admin.get_account(2),blockchain_admin.get_account(5),contract)
         # Calculate Trust
-        trust = contract.get_consice_instance().hop_to_target(blockchain_admin.get_account(5))
+        trust = contract.get_consice_instance().hop_to_target(blockchain_admin.get_account(5),blockchain_admin.get_account(0))
         self.assertEqual(trust, 3)
-
-def test():
-    unittest.main()
 
 if __name__ == '__main__':
     unittest.main()
