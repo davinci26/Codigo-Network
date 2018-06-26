@@ -16,10 +16,10 @@ class TestPriorityQ(unittest.TestCase):
     def test_q_insert(self):
         # Initialize and deploy contract
         contract = Contract('contracts/PQ.sol','PQ',m_web3,verbose=False)
-        contract.publish_contract(m_web3, blockchain_admin.get_account(0))
-        tx_hash = contract.get_contract_instance().insert(1,blockchain_admin.get_account(0), transact={'from': blockchain_admin.get_account(0)})
+        contract.publish(blockchain_admin.get_account(0))
+        tx_hash = contract.get_consice_instance().insert(1,blockchain_admin.get_account(0), transact={'from': blockchain_admin.get_account(0)})
         m_web3.eth.waitForTransactionReceipt(tx_hash)
-        self.assertEqual(contract.get_contract_instance().get_min_key(), 1)
+        self.assertEqual(contract.get_consice_instance().get_min_key(), 1)
     
     '''
     Test Case 2 (Add Multiple values)
@@ -31,12 +31,12 @@ class TestPriorityQ(unittest.TestCase):
                         7:False, 8:False, 9:False, 4:False, 5:False, 12:False}
         # Initialize and deploy contract
         contract = Contract('contracts/PQ.sol','PQ',m_web3,verbose=False)
-        contract.publish_contract(m_web3, blockchain_admin.get_account(0))
+        contract.publish(blockchain_admin.get_account(0))
 
         # Add values to the contract
         for key, _ in values_to_add.items():
             print("Added value: {}".format(key))
-            tx_hash = contract.get_contract_instance().insert(key,blockchain_admin.get_account(0), transact={'from': blockchain_admin.get_account(0)})
+            tx_hash = contract.get_consice_instance().insert(key,blockchain_admin.get_account(0), transact={'from': blockchain_admin.get_account(0)})
             m_web3.eth.waitForTransactionReceipt(tx_hash)
 
         # Get values from the contract
@@ -45,7 +45,7 @@ class TestPriorityQ(unittest.TestCase):
         # Get all values from the contract
         store_vals = {}
         for i in range(0,7):
-            val = contract.get_contract_instance().get_specific_key(i)
+            val = contract.get_consice_instance().get_specific_key(i)
             if val in values_to_check.keys():
                 values_to_check[val] = True
             store_vals[val] = " "
@@ -72,12 +72,12 @@ class TestPriorityQ(unittest.TestCase):
                         -7:False, -8:False, -9:False, -4:False, -5:False, -12:False}
         # Initialize and deploy contract
         contract = Contract('contracts/PQ.sol','PQ',m_web3,verbose=False)
-        contract.publish_contract(m_web3, blockchain_admin.get_account(0))
+        contract.publish(blockchain_admin.get_account(0))
 
         # Add values to the contract
         for key, _ in values_to_add.items():
             print("Added value: {}".format(key))
-            tx_hash = contract.get_contract_instance().insert(key,blockchain_admin.get_account(0), transact={'from': blockchain_admin.get_account(0)})
+            tx_hash = contract.get_consice_instance().insert(key,blockchain_admin.get_account(0), transact={'from': blockchain_admin.get_account(0)})
             m_web3.eth.waitForTransactionReceipt(tx_hash)
 
         # Get values from the contract
@@ -86,7 +86,7 @@ class TestPriorityQ(unittest.TestCase):
         # Get all values from the contract
         store_vals = {}
         for i in range(0,7):
-            val = contract.get_contract_instance().get_specific_key(i)
+            val = contract.get_consice_instance().get_specific_key(i)
             if val in values_to_check.keys():
                 values_to_check[val] = True
             store_vals[val] = " "

@@ -1,0 +1,54 @@
+        // uint8 firmware_index = (stable) ? 0 : 1;
+        // Node[7] heapKeyValue;
+        // uint8 current_size = 0;
+        // for (uint256 i = 0; i < device_developers[device_type].length; i++ ){
+        //     int256 curr_trust = web_trust.hop_to_target(device_developers[device_type][i]);
+        //     if (current_size == 7) {
+        //         uint8 indx;
+        //         bool inserted;
+        //         (inserted,indx) = find_replace_max(curr_trust,device_developers[device_type][i]);
+        //         // Find and replace max value
+        //         uint8 max_pos = 8;
+        //         int256 max_value = -10;
+        //         for (uint8 k = 3; k < 7; k++){
+        //             if (heapKeyValue[k].key > max_value){
+        //                 max_pos = k;
+        //                 max_value = heapKeyValue[k].key;
+        //             }
+        //         }
+        //         if (target_key < max_value) {
+        //             heapKeyValue[max_pos].key = target_key;
+        //             heapKeyValue[max_pos].value = addr;
+        //             return (true,max_pos);
+        //         }
+        //         ///////////////////////////////
+
+        //     if (inserted && indx != 0) {
+        //         uint8 curr_idx = indx;
+        //         uint8 par_idx = curr_idx/2;
+        //         while (heapKeyValue[curr_idx].key < heapKeyValue[par_idx].key ) {
+        //             Node memory tmp = heapKeyValue[curr_idx];
+        //             heapKeyValue[curr_idx] = heapKeyValue[par_idx];
+        //             heapKeyValue[par_idx] = tmp;
+        //         }
+        //     }
+        //     } else {
+        //         heapKeyValue[current_size] = Node(curr_trust,device_developers[device_type][i]);
+        //         curr_idx = current_size;
+        //         par_idx = curr_idx/2;
+        //         while (heapKeyValue[curr_idx].key < heapKeyValue[par_idx].key ) {
+        //             Node memory tmp = heapKeyValue[curr_idx];
+        //             heapKeyValue[curr_idx] = heapKeyValue[par_idx];
+        //             heapKeyValue[par_idx] = tmp;
+        //             curr_idx = par_idx;
+        //             par_idx = curr_idx/2; 
+        //         }
+        //         current_size += 1;
+        //     }
+        // }
+        // Firmware_Info[7] firmware_list;
+        // for (uint8 k = 0;  i < 7; i++){
+        //     PQ.Node memory tmp = pq.get_specific_node(k);
+        //     firmware_list[i] = Firmware_Info(developed_firmware[device_type][tmp.value][firmware_index],tmp.value,tmp.key);
+        // }
+        // return firmware_list;

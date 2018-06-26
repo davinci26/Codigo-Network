@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from Contract import *
 from bc_admin import *
-import utility as u
+import util as u
 
 Mode_SHOW = 0
 experiment_size = 10
@@ -12,7 +12,7 @@ primary_acc = blockchain_admin.get_account(0)
 
 # Initialize and deploy contract
 contract = Contract('contracts/webTrust.sol','Web_Of_Trust',m_web3)
-contract.publish_contract(m_web3, primary_acc)
+contract.publish(primary_acc)
 
 def plt_endorse_trust(mode):
     trusted_addr = u.generate_eth_pk(experiment_size)

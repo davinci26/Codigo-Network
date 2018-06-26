@@ -4,29 +4,11 @@ contract Web_Of_Trust {
     mapping (address => mapping(address => bool)) trust_lookup;
     // Trust graph core
     mapping(address => address[]) trust_graph;
-    // Mapping that marks the visited address when traversing the graphs.
-    mapping (address => mapping(address=>int256)) visitedAddresses;
 
     // Hack to pass mapping as function argument
     struct map_struct {
         mapping(address => bool) visited;
     }
-
-    // ===== To delete =======
-    function addr_to_string(address x) internal{
-        bytes memory b = new bytes(20);
-        for (uint i = 0; i < 20; i++)
-            b[i] = byte(uint8(uint(x) / (2**(8*(19 - i)))));
-        last_sender = string(b);
-    }
-    string last_sender = "test";
-    function last_target() public view returns (string){
-        return last_sender;
-    }
-    function get_from_mapping(address t) public view returns (address){
-        return trust_graph[t][0];
-    }
-    // ============
 
     // Senders trusts a target address
     function endorse_trust(address trusted_address) public {
@@ -37,11 +19,11 @@ contract Web_Of_Trust {
         trust_graph[msg.sender][trust_graph[msg.sender].length - 1] = trusted_address; 
     }
 
-    function hop_to_target(address target /*uint8 threshold*/) public returns (int256){
+    function hop_to_target(address target, address origin /*uint8 threshold*/) public returns (int256){
         map_struct storage ss;
         bool found;
         int256 hops;
-        (hops,found) = hop_internal_rec(msg.sender,target,ss);
+        (hops,found) = hop_internal_rec(origin,target,ss);
         if (found)
             return hops;
         else
@@ -74,6 +56,30 @@ contract Web_Of_Trust {
         }
         return (hops,found);
     }
+
+    //====== Debug Functions & State ======//
+    uint256 contract_version = 1;
+
+    function set_version(uint256 cv_n) public {
+        contract_version = cv_n;
+    }
+
+    function get_version() public view returns (uint256) {
+        return contract_version;
+    }
+
+    function addr_to_string(address x) internal returns (string) {
+        bytes memory b = new bytes(20);
+        for (uint i = 0; i < 20; i++)
+            b[i] = byte(uint8(uint(x) / (2**(8*(19 - i)))));
+        return string(b);
+    }
+
+    function get_from_mapping(address t) public view returns (address){
+        return trust_graph[t][0];
+    }
+
+    //===================================//
 }
 
 

@@ -1,17 +1,22 @@
+import sys
+sys.path.append("lib/")
 from bc_admin import *
 from Contract import *
-from Firmware import *
+from Developer import *
+from User import *
 
-# Establish connection with BC
+device_t = 1
 
+# Deploy BC
 blockchain_admin = Blockchain_admin(local=True)
 m_web3 = blockchain_admin.getWeb3()
-primary_acc = blockchain_admin.get_account(0)
-
-# Initialize and deploy contract
-contract = Contract('contracts/firmware_repo.sol','FirmwareRepo',m_web3)
-contract.publish_contract(m_web3, primary_acc)
-#contract_instance.setGreeting('Nihao', transact={'from': w3.eth.accounts[0]})
-print('Contract version: {}'.format(contract.get_contract_instance().get_version()))
-
-
+# Deploy Contract
+cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, verbose=False)
+cc.publish(blockchain_admin.get_account(0))
+# Push Firmware
+developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(0), device_t)
+developer_node.add_firmware()
+# Pull Firmware
+user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t)
+fw = user_node.get_specific_fw(blockchain_admin.get_account(0))
+print(fw)
