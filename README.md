@@ -19,7 +19,7 @@ With the number of Internet of Things (IoT) devices exponentially increasing, di
  
  Smart contract libraries used in the project will be added to the contracts folder.
 
- This project is merely a combination of existing solutions developed by the open source community. Thus it would be disrespectful not to thank the developing teams of the projects used in the dependencies.
+ This project is merely a combination of existing solutions developed by the open source community. Thus it would be disrespectful not to thank the developing teams of the projects above for their help.
 
 ## How to contribute ##
 Any comments/suggestions/improvements are highly appreciated. However, until the project is submitted for grading no pull requests will be accepted.
