@@ -4,6 +4,7 @@ import sys
 sys.path.append("lib/")
 from Contract import *
 from bc_admin import *
+from ipfs_admin import *
 from Developer import *
 from User import *
 
@@ -12,6 +13,7 @@ logging.basicConfig(filename='./logs/example.log',level=logging.DEBUG)
 
 blockchain_admin = Blockchain_admin(local=True)
 m_web3 = blockchain_admin.getWeb3()
+ipfs_admin = IPFS_Admin(local = True)
 device_t = 1
 
 class TestFwRepo(unittest.TestCase):
@@ -70,16 +72,17 @@ class TestFwRepo(unittest.TestCase):
         cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, verbose=False)
         cc.publish(blockchain_admin.get_account(0))
         # Create Developer node with PK(1)
-        developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(0), device_t)
+        developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(0), device_t,ipfs_admin)
         # Push Firmware
         developer_node.add_firmware()
         print("Pushed - Fw description: {}".format(developer_node.fw.description[:10]))
         # Create User node with PK(0)
-        user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t)
+        user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t,ipfs_admin)
         # Pull Firmware - Specific
         fw_hash,fw_ipfs,fw_descr,fw_block = user_node.get_specific_fw(blockchain_admin.get_account(0))
         #val = user_node.get_specific_fw(blockchain_admin.get_account(0))
         print("Pulled - Fw description: {}".format(fw_descr[:10]))
+        print("Pulled - Fw IPFS link: {}".format(fw_ipfs))
         self.assertEqual(fw_descr,developer_node.fw.description)
 
     '''
@@ -91,7 +94,7 @@ class TestFwRepo(unittest.TestCase):
         cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, verbose=False)
         cc.publish(blockchain_admin.get_account(0))
         # Create User node with PK(0)
-        user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t)
+        user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t,ipfs_admin)
         # Pull Firmware - Specific
         flag = False
         try:
@@ -103,7 +106,7 @@ class TestFwRepo(unittest.TestCase):
 
 
     '''
-    Test Case 5 ( Push - Trust - Pull Firmware)
+    Test Case 6 ( Push - Trust - Pull Firmware)
     Upload a firmware to the blockchain, trust the developer tha upload it
     and then retrieve it back from most trusted.
     '''
@@ -119,12 +122,12 @@ class TestFwRepo(unittest.TestCase):
         # Test that web of trust works
         print("Web of Trust Version: {} ".format(web_of_trust.get_def_instance().functions.get_version().call()))
         # Create Developer node with PK(1)
-        developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(1), device_t)
+        developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(1), device_t,ipfs_admin)
         # Push Firmware
         developer_node.add_firmware()
         print("Pushed - Fw description: {}".format(developer_node.fw.description[:10]))
         # Create User node with PK(0)
-        user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t)
+        user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t,ipfs_admin)
         # Trust Developer PK(1)
         user_node.endorse_developer(web_of_trust, blockchain_admin.get_account(1))
         # Pull Firmware - Most Trusted
@@ -133,7 +136,7 @@ class TestFwRepo(unittest.TestCase):
         self.assertEqual(fw_descr,developer_node.fw.description)
     
     '''
-    Test Case 6 ( Push - No Trust - Pull Firmware)
+    Test Case 7 ( Push - No Trust - Pull Firmware)
     Upload a firmware to the blockchain and retrieve most trusted.
     '''
     def test_most_trusted_fail(self):
@@ -141,12 +144,12 @@ class TestFwRepo(unittest.TestCase):
         cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, verbose=False)
         cc.publish(blockchain_admin.get_account(0))
         # Create Developer node with PK(1)
-        developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(1), device_t)
+        developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(1), device_t,ipfs_admin)
         # Push Firmware
         developer_node.add_firmware()
         print("Pushed - Fw description: {}".format(developer_node.fw.description[:10]))
         # Create User node with PK(0)
-        user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t)
+        user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t,ipfs_admin)
         # Pull Firmware - Most Trusted
         try:
             fw_hash,fw_ipfs,fw_descr,fw_block,fw_dev,trust = user_node.get_most_trusted_fw()
@@ -154,7 +157,9 @@ class TestFwRepo(unittest.TestCase):
             print("Transaction failure caught successfully")
             flag = True
         self.assertTrue(flag)
-
+    '''
+    Test Case 8 ( Multiple Push - Multiple Trust - Multiple Pull Firmware)
+    '''
     def test_multiple_trusted(self):
         # Deploy Contract
         cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, verbose=False)
@@ -167,12 +172,12 @@ class TestFwRepo(unittest.TestCase):
         # Test that web of trust works
         print("Web of Trust Version: {} ".format(web_of_trust.get_def_instance().functions.get_version().call()))
         # Create User node with PK(0)
-        user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t)
+        user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t,ipfs_admin)
         fw_dictionary = {}
         # Create 7 developers, let them push fw and then trust them
         for i in range(1,8):
             # Create Developer node with PK(1)
-            developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(i), device_t)
+            developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(i), device_t,ipfs_admin)
             # Push Firmware
             developer_node.add_firmware()
             print("Pushed - Fw description: {} from dev {}".format(developer_node.fw.description[:10],blockchain_admin.get_account(i)))
