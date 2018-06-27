@@ -100,6 +100,7 @@ contract FirmwareRepo{
     function edit_description(string description_, string device_type, bool stable) public {
         //TODO: Add proper require()
         uint8 firmware_index = (stable) ? 0 : 1;
+        require(!is_empty(developed_firmware[device_type][msg.sender][firmware_index].description));
         developed_firmware[device_type][msg.sender][firmware_index].description = description_;
     }
 
