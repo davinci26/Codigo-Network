@@ -5,7 +5,7 @@ import util as u
 
 class Firmware:
 
-    def __init__(self,firmware_id,firmware_stable = True, firmware_file = None):
+    def __init__(self,firmware_id,firmware_stable = True, firmware_file = None, firmware_description = ""):
        
         """ Initializes an instance of a firmware object
         
@@ -20,6 +20,7 @@ class Firmware:
         """
         self.device_type = str(firmware_id)
         self.stable = firmware_stable
+        self.description = firmware_description
         if firmware_file:
             self.__init_from_file(firmware_file)
         else:
@@ -61,6 +62,7 @@ class Firmware:
         self.__initialize(self.firmware_str)
         self.firmware_dir = "./logs/" +self.firmware_str[:5]
         self.save_local(self.firmware_dir)
+        self.description = u.generate_random_txt()
         
 
     def __initialize(self,firmware_str):
@@ -71,7 +73,6 @@ class Firmware:
         """
         #TODO: Correct IPFS link
         self.firmware_hash = u.hash(firmware_str)
-        self.description = u.generate_random_txt()
         self.IPFS_link = "TBD"
 
     def set_ipfs_link(self, link):

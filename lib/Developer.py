@@ -17,7 +17,7 @@ class Developer_Node(Node):
         Node.__init__(self,m_web3, contract, pk, device_type,ipfs_instance)
         self.fw = None
 
-    def add_firmware(self, firmware_stable = True, firmware_file = None):
+    def add_firmware(self, firmware_stable, firmware_file):
         """ The developer Node adds a firmware to the blockchain
         
         Keyword Arguments:
