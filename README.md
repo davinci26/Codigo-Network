@@ -16,6 +16,7 @@ With the number of Internet of Things (IoT) devices exponentially increasing, di
  - [Web3Py](https://github.com/ethereum/web3.py)
  - [Truffle](https://github.com/trufflesuite/truffle-contract)
  - [Ganache-cli](https://github.com/trufflesuite/ganache-cli)
+ - [PyQt5](https://github.com/pyqt) (Optional)
  
  Smart contract libraries used in the project will be added to the contracts folder.
 
