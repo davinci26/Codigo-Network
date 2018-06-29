@@ -17,7 +17,7 @@ class Developer_Node(Node):
         Node.__init__(self,m_web3, contract, pk, device_type,ipfs_instance)
         self.fw = None
 
-    def add_firmware(self, firmware_stable, firmware_file):
+    def add_firmware(self, firmware_stable, firmware_file ,firmware_description = ""):
         """ The developer Node adds a firmware to the blockchain
         
         Keyword Arguments:
@@ -31,16 +31,18 @@ class Developer_Node(Node):
         """
         #TODO: Exceptions, if this doesnt work for some reason it breaks.
         # Create/locate firmware
-        self.fw = Firmware(self.device_type, firmware_stable, firmware_file)
+        self.fw = Firmware(self.device_type, firmware_stable, firmware_file , firmware_description)
         # Upload Firmware to IPFS
         res = self.ipfs.upload_firmware(self.fw)
         # Set up the firmware IPFS link
         self.fw.set_ipfs_link(res['Hash'])
         # Add it to blockchain
+        print(self.fw)
         tx_hash = self.contract.get_consice_instance().add_firmware(self.fw.firmware_hash, self.fw.IPFS_link,
                                                            self.fw.description, self.fw.device_type,
                                                            self.fw.stable,transact={'from': self.node_pk})
         tx_receipt = self.m_web3.eth.getTransactionReceipt(tx_hash)
+        self.fw.tx_cost = tx_receipt['cumulativeGasUsed']
         # Return tx receipt
         return tx_receipt
 

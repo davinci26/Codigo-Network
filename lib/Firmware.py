@@ -25,16 +25,19 @@ class Firmware:
             self.__init_from_file(firmware_file)
         else:
             self.__init_random()
+        self.tx_cost = "Not determined"
     
     # To string for debbug printing
     def __str__(self):
         rep = "========== Firmware Object ===========\n"
+        rep += "Firmware Directory:" + str(self.firmware_dir) + "\n"
         rep += "Code: " + self.firmware_str[:10] + "\n"
         rep += "Hash: " +  u.hash_to_utf8(self.firmware_hash) + "\n"
         rep += "IPFS Link: " + self.IPFS_link + "\n"
         rep += "Description: " + self.description[:10] + "\n"
         rep += "Target Device: " + self.device_type + "\n"
         rep += "LTS Version: " + str(self.stable) + "\n"
+        rep += "Cumulative Gas Cost: " + str(self.tx_cost) + "\n"
         rep += "=======================================\n"
         return rep
     
@@ -48,7 +51,7 @@ class Firmware:
         try:
             with open(firmware_file_, 'r') as firmware_file:
                 self.firmware_str = firmware_file.read()
-            self.firmware_dir = firmware_file
+            self.firmware_dir = firmware_file_
             self.__initialize(self.firmware_str)
         except EnvironmentError:
             traceback.print_exc()
