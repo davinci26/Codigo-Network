@@ -8,53 +8,60 @@ from dev_variables import *
 import argparse
 
 dev_variables = Dev_Variables()
-# def main_cli():
-#     parser = argparse.ArgumentParser(description='Command Line Interface')
-#     parser.add_argument('--PK_index', type=int, nargs='?',
-#                         help='Web3 public key index')
-#     parser.add_argument('--Device_Type', type=str, nargs='?',default="Raspberry pi",
-#                         help='The device that the firmware targets')
-#     parser.add_argument('--Firmware', type=str, nargs='?',default = None,
-#                         help='Path to the firmware you wish to upload')
-#     parser.add_argument('--FW_Stable', action='store_true', default = True,
-#                         help='Stable or LTS version of the firmware')
-#     parser.add_argument('--Contract_Address', type=str, nargs='?',default=None,
-#                         help='Firmware Repository Address')
-#     parser.add_argument('--Local_IPFS', action='store_true', default = False,
-#                         help='Use local IPFS deamon, or use Infura')
-#     parser.add_argument('--Local_BC', action='store_true', default = True,
-#                         help='Use local blockchain')
-#     args = parser.parse_args()
-#     PK_index = args.PK_index
-#     Contract_Address = args.Contract_Address
-#     Local_IPFS = args.Local_IPFS
-#     Local_BC = args.Local_BC
-#     device_t = args.Device_Type
-#     fw_path = args.Firmware
-#     FW_Stable = args.FW_Stable
-#     FW_description = "None"
-#     upload()
+parser = argparse.ArgumentParser(description='Command Line Interface')
+parser.add_argument('--cli', action='store_true', default = False,
+                    help='Use CLI instead of GUI')
+parser.add_argument('--PK_index', type=int, nargs='?',default=0,
+                    help='Web3 public key index')
+parser.add_argument('--Device_Type', type=str, nargs='?',default="Raspberry pi",
+                    help='The device that the firmware targets')
+parser.add_argument('--Firmware', type=str, nargs='?',default = None,
+                    help='Path to the firmware you wish to upload')
+parser.add_argument('--FW_Stable', action='store_true', default = True,
+                    help='Stable or LTS version of the firmware')
+parser.add_argument('--description', type=str, nargs='?',default = None,
+                    help='Firmware Description')
+parser.add_argument('--Contract_Address', type=str, nargs='?',default=None,
+                    help='Firmware Repository Address')
+parser.add_argument('--Local_IPFS', action='store_true', default = False,
+                    help='Use local IPFS deamon, or use Infura')
+parser.add_argument('--Local_BC', action='store_true', default = True,
+                    help='Use local blockchain')
+blockchain_admin = None
+m_web3 = None
+ipfs_admin = None
+
+def upload(dev_vars):
+    # Initialize communication with blockchain
+    global blockchain_admin
+    global m_web3
+    global ipfs_admin
+    if blockchain_admin == None:
+        blockchain_admin = Blockchain_admin(local= dev_vars.Local_BC)
+    if m_web3 == None:
+        m_web3 = blockchain_admin.getWeb3()
+    # Initialize communication with IPFS
+    if ipfs_admin == None:
+        ipfs_admin = IPFS_Admin(local = dev_vars.Local_IPFS)
+    # Deploy Contract
+    cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, address_=dev_vars.Contract_Address,  verbose=False)
+    try:
+        firmware_repo_address = cc.publish(blockchain_admin.get_account(dev_vars.PK_index))
+    except:
+        firmware_repo_address = cc.address
+    # Get web of trust address
+    web_of_trust_addr = cc.get_def_instance().functions.trust_address().call()
+    # Create Developer node with PK
+    developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(dev_vars.PK_index), dev_vars.device_t, ipfs_admin)
+    # Push Firmware
+    developer_node.add_firmware(firmware_stable = dev_vars.FW_Stable, firmware_file= dev_vars.fw_path, firmware_description = dev_vars.FW_description)
+    print("Pushed - Fw description: {}".format(developer_node.fw.description[:10]))
+    return developer_node.fw, firmware_repo_address,web_of_trust_addr
 
 def main_qt():
     from PyQt5.QtWidgets import (QApplication, QWidget,QLabel,QCheckBox, QFormLayout,
     QLineEdit, QComboBox,QGroupBox, QGridLayout,QTextEdit,QPushButton, QFileDialog, QSpinBox)
     from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
-
-    def upload(dev_vars):
-        # Initialize communication with blockchain
-        blockchain_admin = Blockchain_admin(local= dev_vars.Local_BC)
-        m_web3 = blockchain_admin.getWeb3()
-        # Initialize communication with IPFS
-        ipfs_admin = IPFS_Admin(local = dev_vars.Local_IPFS)
-        # Deploy Contract
-        cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, address_=dev_vars.Contract_Address,  verbose=False)
-        cc.publish(blockchain_admin.get_account(dev_vars.PK_index))
-        # Create Developer node with PK(1)
-        developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(dev_vars.PK_index), dev_vars.device_t, ipfs_admin)
-        # Push Firmware
-        developer_node.add_firmware(firmware_stable = dev_vars.FW_Stable, firmware_file= dev_vars.fw_path, firmware_description = dev_vars.FW_description)
-        print("Pushed - Fw description: {}".format(developer_node.fw.description[:10]))
-        return developer_node.fw
 
     @pyqtSlot(int)
     def enable_selection(v):
@@ -102,7 +109,9 @@ def main_qt():
         uploaded_fw = upload(dev_variables)
         print(uploaded_fw)
         if uploaded_fw:
-            Info.setText("Pushed the following to IPFS and Ethereum \n" + uploaded_fw.__str__())
+            Info.setText("Web of Trust address: {}\n".format(uploaded_fw[2]) +
+                         "Firmware Repository address: {} \n".format(uploaded_fw[1]) + 
+                         "Pushed the following firmware to IPFS and Ethereum \n" + str(uploaded_fw[0]))
 
     app = QApplication(sys.argv)
     mainWdgt = QWidget()
@@ -132,7 +141,7 @@ def main_qt():
 
     firmware_wdgt = QGroupBox("Firmware Information")
     firmware_wdgt_lay = QGridLayout(firmware_wdgt)
-    # Contract Address
+    # Target device
     dev_type_wdgt = QLineEdit()
     dev_type_wdgt.setText("Raspberry pi")
     dev_type_wdgt.textChanged.connect(set_target_device)
@@ -173,4 +182,19 @@ def main_qt():
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
-    main_qt()
+    args = parser.parse_args()
+    if args.cli:
+        dev_variables.PK_index = int(args.PK_index)
+        dev_variables.Contract_Address = args.Contract_Address
+        dev_variables.Local_IPFS = args.Local_IPFS
+        dev_variables.Local_BC = args.Local_BC
+        dev_variables.device_t = args.Device_Type
+        dev_variables.fw_path = args.Firmware
+        dev_variables.FW_Stable = args.FW_Stable
+        dev_variables.FW_description = args.description
+        fw = upload(dev_variables)
+        print("Web of Trust address: {}".format(fw[2]))
+        print("Firmware Repository address: {}".format(fw[1]))
+        print("Uploaded to IPFS & Eth the following firmware:\n" + str(fw[0]))
+    else:
+        main_qt()

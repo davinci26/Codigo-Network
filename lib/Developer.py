@@ -37,12 +37,12 @@ class Developer_Node(Node):
         # Set up the firmware IPFS link
         self.fw.set_ipfs_link(res['Hash'])
         # Add it to blockchain
-        print(self.fw)
         tx_hash = self.contract.get_consice_instance().add_firmware(self.fw.firmware_hash, self.fw.IPFS_link,
                                                            self.fw.description, self.fw.device_type,
                                                            self.fw.stable,transact={'from': self.node_pk})
         tx_receipt = self.m_web3.eth.getTransactionReceipt(tx_hash)
         self.fw.tx_cost = tx_receipt['cumulativeGasUsed']
+        self.fw.block = tx_receipt['blockNumber']
         # Return tx receipt
         return tx_receipt
 

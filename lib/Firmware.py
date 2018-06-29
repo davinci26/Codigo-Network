@@ -26,6 +26,7 @@ class Firmware:
         else:
             self.__init_random()
         self.tx_cost = "Not determined"
+        self.block = "Not on the blockchain"
     
     # To string for debbug printing
     def __str__(self):
@@ -38,6 +39,7 @@ class Firmware:
         rep += "Target Device: " + self.device_type + "\n"
         rep += "LTS Version: " + str(self.stable) + "\n"
         rep += "Cumulative Gas Cost: " + str(self.tx_cost) + "\n"
+        rep += "Included in Block: " + str(self.block) + "\n"
         rep += "=======================================\n"
         return rep
     
