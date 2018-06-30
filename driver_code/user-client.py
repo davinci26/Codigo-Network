@@ -128,6 +128,11 @@ def main_qt():
             text += "============================================================\n"
         Info.setText(text)
 
+    @pyqtSlot()
+    def download_fw():
+        print(fw_ipfs)
+        user_node.download_firmware(fw_ipfs)
+        Info.setText("Fw {} is downloaded successfully".format(fw_ipfs))
 
     app = QApplication(sys.argv)
     mainWdgt = QWidget()
@@ -178,6 +183,7 @@ def main_qt():
 
     specific_dev_wdgt = QLineEdit()
     prv_specific = QPushButton("Preview")
+    prv_specific.clicked.connect(get_specific)
     operation_wdgt_lay.addWidget(QLabel("Preview Firmware from PK"),1,0)
     operation_wdgt_lay.addWidget(specific_dev_wdgt,1,1)
     operation_wdgt_lay.addWidget(prv_specific,1,2)
@@ -194,9 +200,11 @@ def main_qt():
     mainLayout.addWidget(network_wdgt,0,0)
     mainLayout.addWidget(operation_wdgt,0,1)
     Info = QTextEdit("Log ....")
+    Info.setEnabled(False)
     mainLayout.addWidget(Info,1,0,1,-1)
     download_btn = QPushButton("Download Firmware")
     download_btn.setEnabled(False)
+    download_btn.clicked.connect(download_fw)
     mainLayout.addWidget(download_btn,2,0,1,-1)
     mainWdgt.show()
 

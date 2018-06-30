@@ -8,4 +8,4 @@ class Dev_Variables:
         self.device_t = "Raspberry pi"
         self.fw_path = None
         self.FW_Stable = True
-        self.FW_description = "None"
+        self.FW_description = None

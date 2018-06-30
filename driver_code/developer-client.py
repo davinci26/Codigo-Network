@@ -107,9 +107,10 @@ def main_qt():
     @pyqtSlot()
     def upload_fw():
         uploaded_fw = upload(dev_variables)
-        print(uploaded_fw)
+        print(uploaded_fw[0])
         if uploaded_fw:
-            Info.setText("Web of Trust address: {}\n".format(uploaded_fw[2]) +
+            Info.setText("Developer: {}\n".format(blockchain_admin.get_account(dev_variables.PK_index))+
+                         "Web of Trust address: {}\n".format(uploaded_fw[2]) +
                          "Firmware Repository address: {} \n".format(uploaded_fw[1]) + 
                          "Pushed the following firmware to IPFS and Ethereum \n" + str(uploaded_fw[0]))
 

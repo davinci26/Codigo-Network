@@ -63,12 +63,12 @@ class Firmware:
         """
         Initialize a firmware as a random string
         """
+        if self.description == None:
+            self.description = u.generate_random_txt()
         self.firmware_str = u.generate_random_txt()
         self.__initialize(self.firmware_str)
         self.firmware_dir = "./logs/" +self.firmware_str[:5]
         self.save_local(self.firmware_dir)
-        if not self.description:
-            self.description = u.generate_random_txt()
         
     def __initialize(self,firmware_str):
         """
@@ -78,8 +78,6 @@ class Firmware:
         """
         self.firmware_hash = u.hash(firmware_str)
         self.IPFS_link = "TBD"
-        if self.description == None:
-            self.description = "No description was specified"
 
     def set_ipfs_link(self, link):
         self.IPFS_link = link
