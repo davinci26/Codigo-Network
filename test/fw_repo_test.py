@@ -74,7 +74,7 @@ class TestFwRepo(unittest.TestCase):
         # Create Developer node with PK(1)
         developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(0), device_t,ipfs_admin)
         # Push Firmware
-        developer_node.add_firmware()
+        developer_node.add_firmware(firmware_stable = True, firmware_file= None, firmware_description = None)
         print("Pushed - Fw description: {}".format(developer_node.fw.description[:10]))
         # Create User node with PK(0)
         user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t,ipfs_admin)
@@ -124,7 +124,7 @@ class TestFwRepo(unittest.TestCase):
         # Create Developer node with PK(1)
         developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(1), device_t,ipfs_admin)
         # Push Firmware
-        developer_node.add_firmware()
+        developer_node.add_firmware(firmware_stable = True, firmware_file= None, firmware_description = None)
         print("Pushed - Fw description: {}".format(developer_node.fw.description[:10]))
         # Create User node with PK(0)
         user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t,ipfs_admin)
@@ -146,7 +146,7 @@ class TestFwRepo(unittest.TestCase):
         # Create Developer node with PK(1)
         developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(1), device_t,ipfs_admin)
         # Push Firmware
-        developer_node.add_firmware()
+        developer_node.add_firmware(firmware_stable = True, firmware_file= None, firmware_description = None)
         print("Pushed - Fw description: {}".format(developer_node.fw.description[:10]))
         # Create User node with PK(0)
         user_node = User_Node(m_web3, cc, blockchain_admin.get_account(0), device_t,ipfs_admin)
@@ -179,7 +179,7 @@ class TestFwRepo(unittest.TestCase):
             # Create Developer node with PK(1)
             developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(i), device_t,ipfs_admin)
             # Push Firmware
-            developer_node.add_firmware()
+            developer_node.add_firmware(firmware_stable = True, firmware_file= None, firmware_description = None)
             print("Pushed - Fw description: {} from dev {}".format(developer_node.fw.description[:10],blockchain_admin.get_account(i)))
             # Store Firmware locally
             fw_dictionary[developer_node.fw.description] = False

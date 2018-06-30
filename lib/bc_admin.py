@@ -22,7 +22,7 @@ class Blockchain_admin:
     def __init__(self,local, chain_ip = None, Online_Acc_Addr  = None, Online_Acc_Pwd = None):
         self.local = local
         if local:
-            self.m_web3 = Web3(TestRPCProvider())
+            self.m_web3 = Web3(HTTPProvider('http://localhost:8545'))
         else:
             if chain_ip == None or Online_Acc_Addr == None or Online_Acc_Addr == None:
                 raise ValueError("One of the variables passed to the constructor is None")

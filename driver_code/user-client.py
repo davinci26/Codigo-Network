@@ -18,6 +18,7 @@ m_web3 = None
 blockchain_admin = None
 cc = None
 web_of_trust = None
+fw_ipfs = None
 
 def init_user():
     global user_node
@@ -98,8 +99,10 @@ def main_qt():
             return
         if user_node == None:
             init_user()
+        global fw_ipfs
         fw_hash,fw_ipfs,fw_descr,fw_block = user_node.get_specific_fw(Web3.toChecksumAddress(specific_dev_wdgt.text()))
         Info.setText("Firmware Preview:\n Description: {} \n IPFS Link: {}".format(fw_descr[:10],fw_ipfs))
+        download_btn.setEnabled(True)
 
     @pyqtSlot()
     def get_most_trusted():
@@ -108,6 +111,7 @@ def main_qt():
             return
         fw_hash,fw_ipfs,fw_descr,fw_block,fw_dev,trust = user_node.get_most_trusted_fw()
         Info.setText("Firmware Preview:\n Description: {} \n IPFS Link: {} \n Trust: {}".format(fw_descr[:10],fw_ipfs,trust))
+        download_btn.setEnabled(True)
     
     @pyqtSlot()
     def get_multiple():
@@ -116,6 +120,7 @@ def main_qt():
             return
         fw_list = user_node.get_mult_trusted_fw_local(web_of_trust)
         text = "Firmware to preview"
+        global fw_ipfs
         for fw in fw_list:
             #unpack fw
             fw_hash,fw_ipfs,fw_descr,fw_block,fw_dev,trust = fw
