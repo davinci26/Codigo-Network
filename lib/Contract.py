@@ -1,35 +1,18 @@
-from solc import compile_files
 from web3.contract import ConciseContract
+from solc import compile_files
+from Abstract_Contract import *
 
-
-class Contract:
+class Contract(Abstract_Contract):
 
     def __init__(self, directory_, contract_name_, m_web3,address_ = None,verbose = True):
-        """ Contract constructor
-        
-        Arguments:
-            directory_ {String/Directory} -- Contract directory
-            contract_name_ {[type]} -- Contract name
-            m_web3 {web3} -- Web3 instance
-
-        Keyword Arguments:
-            address_ {Ethereum Address} -- If the contract is already deployed (default: {None})
-            verbose {bool} -- Print on console (default: {True})
-        Raises:
-            ValueError -- Throws a value error if Web3 instance is None
-        """
-        if verbose:
-            print("========== Initializing {} ==========".format(contract_name_))
-        if m_web3 == None:
-            print("========== Failed to initialize  ==========")
+        try:
+            super(Contract, self).__init__(contract_name_,m_web3,verbose)     
+        except ValueError:
             raise ValueError("Received uninitialized Web3 instance")
         self.address = address_
-        self.directory = directory_
         self.name = contract_name_
+        self.directory = directory_
         self.id = self.directory + ':' + self.name
-        self.abi = self._contract_abi()
-        self.verbose = verbose
-        self.m_web3 = m_web3
     
 
     def publish(self, account_address):
@@ -44,6 +27,7 @@ class Contract:
         if self.address != None:
             raise ValueError("Contract already published to the blockchain")
         compile_sol = compile_files([self.directory], evm_version='homestead')
+        self.abi = compile_sol[self.id]['abi']
         my_contract = self.m_web3.eth.contract(
             abi = self.abi,
             bytecode = compile_sol[self.id]['bin'], 
@@ -61,36 +45,16 @@ class Contract:
             print("Contract Address: {}".format(self.address))
         return self.address
 
-    def _contract_abi(self):
-        """ Compile contract and get the contract abi     
-        Returns:
-            [type] -- [description]
+    def save_abi(self,abi_directory):
+        import json
+        """ Save Contract ABI
+        Arguments:
+            abi_directory {String/Directory} -- Where to save the contract ABI
+        Raises:
+            ValueError -- If the contract is not compiled/published yet then it throws
         """
-        compile_sol = compile_files([self.directory])
-        return compile_sol[self.id]['abi']
+        if self.address == None:
+            raise ValueError("Contract is not compiled yet.")
 
-    def get_consice_instance(self):
-        """ Return Consice Contract Instance (Look at web3py documentation)
-        
-        Raises:
-            ValueError -- Raises a value error if the contract is not published to the blockchain
-        
-        Returns:
-            [Web3 Contract] -- Web3 consice contract instance 
-        """
-        if self.address == None:
-            raise ValueError("Contract not published to the blockchain")
-        return self.m_web3.eth.contract(address=self.address, abi=self.abi, ContractFactoryClass=ConciseContract)
-    
-    def get_def_instance(self):
-        """ Return Contract Instance (Look at web3py documentation)
-        
-        Raises:
-            ValueError -- Raises a value error if the contract is not published to the blockchain
-        
-        Returns:
-            [Web3 Contract] -- Web3 contract instance 
-        """
-        if self.address == None:
-            raise ValueError("Contract not published to the blockchain")
-        return self.m_web3.eth.contract(address=self.address, abi=self.abi)
+        with open(abi_directory, 'w') as contract_abi:
+            json.dump(self.abi, contract_abi)

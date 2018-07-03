@@ -3,7 +3,7 @@ from web3 import Web3
 sys.path.append("lib/")
 from bc_admin import *
 from ipfs_admin import *
-from Contract import *
+from Compact_Contract import *
 from User import *
 from user_variables import *
 import argparse
@@ -30,16 +30,16 @@ def init_user():
     m_web3 = blockchain_admin.getWeb3()
     # Initialize communication with IPFS
     ipfs_admin = IPFS_Admin(local = user_variables.Local_IPFS)
-    # Deploy Contract
-    cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, address_=user_variables.Contract_Address,  verbose=False)
-    try:
-        cc.publish(blockchain_admin.get_account(user_variables.PK_index))
-    except:
-        pass
+    # Get Contract
+    cc = Compact_Contract('working_dir/fw_repo_abi','FirmwareRepo',
+                          m_web3, address_=user_variables.Contract_Address,
+                          verbose=False)
     # Get web of trust address
     web_of_trust_addr = cc.get_def_instance().functions.trust_address().call()
     # Initialize web of trust contract
-    web_of_trust = Contract('contracts/webTrust.sol','Web_Of_Trust',m_web3,verbose=False, address_ = web_of_trust_addr)
+    web_of_trust = Compact_Contract('working_dir/web_trust_abi','Web_Of_Trust',
+                                    m_web3, address_ = web_of_trust_addr,
+                                    verbose=False)
     # Create User node with PK(0)
     user_node = User_Node(m_web3, cc, blockchain_admin.get_account(user_variables.PK_index), user_variables.device_t, ipfs_admin)
 

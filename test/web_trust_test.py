@@ -29,6 +29,7 @@ class TestTrust(unittest.TestCase):
         # Initialize and deploy contract
         contract = Contract('contracts/webTrust.sol','Web_Of_Trust',m_web3,verbose=False)
         contract.publish(blockchain_admin.get_account(0))
+        contract.save_abi('working_dir/web_trust_abi')
         # Set Version
         tx_hash = contract.get_consice_instance().set_version(10, transact={'from': blockchain_admin.get_account(0)})
         # Get Version
