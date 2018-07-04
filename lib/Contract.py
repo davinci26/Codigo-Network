@@ -5,6 +5,21 @@ from Abstract_Contract import *
 class Contract(Abstract_Contract):
 
     def __init__(self, directory_, contract_name_, m_web3,address_ = None,verbose = True):
+        """ Initializes a Contract Instance. The main difference between Contract and Compact Contract
+            is the dependencies. This class is used mostly for debugging and deploys the contract as well.    
+        Arguments:
+            directory_ {String} -- Smart contract file directory
+            contract_name_ {String} -- Name of the contract
+            m_web3 {Web3} -- Web3 instance
+        
+        Keyword Arguments:
+            address_ {Web3 Address} -- If the contract is already deployed. Use Compact contract in that case
+                                       (default: {None})
+            verbose {bool} -- Print on terminal (default: {True})
+        
+        Raises:
+            ValueError -- Received uninitialized Web3 instance
+        """
         try:
             super(Contract, self).__init__(contract_name_,m_web3,verbose)     
         except ValueError:
@@ -13,6 +28,7 @@ class Contract(Abstract_Contract):
         self.name = contract_name_
         self.directory = directory_
         self.id = self.directory + ':' + self.name
+        self.deployment_cost = 0
     
 
     def publish(self, account_address):
@@ -37,6 +53,7 @@ class Contract(Abstract_Contract):
         self.m_web3.eth.waitForTransactionReceipt(trans_hash)
         txn_receipt = self.m_web3.eth.getTransactionReceipt(trans_hash)
         self.address = txn_receipt['contractAddress']
+        self.deployment_cost = txn_receipt['cumulativeGasUsed']
         self.published = True
         if self.verbose:
             print("========== Contract Deployed Successfully ==========")
@@ -47,7 +64,7 @@ class Contract(Abstract_Contract):
 
     def save_abi(self,abi_directory):
         import json
-        """ Save Contract ABI
+        """Save Contract ABI
         Arguments:
             abi_directory {String/Directory} -- Where to save the contract ABI
         Raises:

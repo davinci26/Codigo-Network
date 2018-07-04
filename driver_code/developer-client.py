@@ -2,7 +2,6 @@ import sys
 sys.path.append("lib/")
 from bc_admin import *
 from ipfs_admin import *
-from Contract import *
 from Developer import *
 from dev_variables import *
 import argparse
@@ -44,10 +43,18 @@ def upload(dev_vars):
     if ipfs_admin == None:
         ipfs_admin = IPFS_Admin(local = dev_vars.Local_IPFS)
     # Deploy Contract
-    cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, address_=dev_vars.Contract_Address,  verbose=False)
-    try:
-        firmware_repo_address = cc.publish(blockchain_admin.get_account(dev_vars.PK_index))
-    except:
+    if dev_vars.Contract_Address == None:
+        from Contract import Contract
+        cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, address_=dev_vars.Contract_Address,  verbose=False)
+        try:
+            firmware_repo_address = cc.publish(blockchain_admin.get_account(dev_vars.PK_index))
+        except:
+            firmware_repo_address = cc.address
+    else:
+        from Compact_Contract import Compact_Contract
+        cc = Compact_Contract('working_dir/fw_repo_abi','FirmwareRepo',
+                              m_web3, address_=user_variables.Contract_Address,
+                              verbose=False)
         firmware_repo_address = cc.address
     # Get web of trust address
     web_of_trust_addr = cc.get_def_instance().functions.trust_address().call()

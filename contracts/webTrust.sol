@@ -19,6 +19,61 @@ contract Web_Of_Trust {
         trust_graph[msg.sender][trust_graph[msg.sender].length - 1] = trusted_address; 
     }
 
+    function revoke_trust(address untrusted_address) public {
+        // The address is already trusted
+        require(trust_lookup[msg.sender][untrusted_address]);
+        trust_lookup[msg.sender][untrusted_address] = false;
+        bool found_untrusted_address = false;
+        for (uint256 i = 0; i < trust_graph[msg.sender].length - 1; i++) {
+
+            if (trust_graph[msg.sender][i]==untrusted_address)
+                found_untrusted_address = true;
+
+            if (found_untrusted_address){
+                trust_graph[msg.sender][i] =  trust_graph[msg.sender][i+1];
+            }
+        }
+        delete trust_graph[msg.sender][trust_graph[msg.sender].length-1];
+        trust_graph[msg.sender].length--;
+    }
+
+    function bfs(address target, address origin) public view returns (int256) {
+        map_struct ss;
+        ss.visited[target] = true;
+        address[] qq;
+        qq.length++;
+        qq[qq.length - 1] = origin;
+        bool searching = true;
+        int256 hops = 0;
+        uint256 q_btm = 0;
+        while (searching){
+            address curr = qq[qq.length - 1];
+            qq.length --;
+            if (trust_lookup[curr][target]){
+                hops += 1;
+                searching = false;
+            }
+            for (uint256 i = 0; i < trust_graph[curr].length; i++){
+                if (trust_graph[curr][i] == target)
+                    searching = false;
+                
+                if (searching && !ss.visited[trust_graph[curr][i]]){
+                    ss.visited[trust_graph[curr][i]] = true;
+                    qq.length++;
+                    qq[qq.length - 1] = trust_graph[curr][i];
+                    hops += 1;
+                }
+            }
+            if (searching && 0 == qq.length){
+                return -1;
+            }
+        }
+        
+        return hops;
+    }
+
+
+
     function hop_to_target(address target, address origin /*uint8 threshold*/) public returns (int256){
         map_struct storage ss;
         bool found;
@@ -29,7 +84,7 @@ contract Web_Of_Trust {
         else
             return -1;
     }
-
+    
     // TODO: Calculate Big O notation for the algorithm and write documentation :)
 
     function hop_internal_rec(address origin, address target, map_struct storage ss /*uint8 threshold*/)

@@ -101,7 +101,7 @@ def main_qt():
             init_user()
         global fw_ipfs
         fw_hash,fw_ipfs,fw_descr,fw_block = user_node.get_specific_fw(Web3.toChecksumAddress(specific_dev_wdgt.text()))
-        Info.setText("Firmware Preview:\n Description: {} \n IPFS Link: {}".format(fw_descr[:10],fw_ipfs))
+        Info.setText("Firmware Specific:\n Description: {} \n IPFS Link: {}".format(fw_descr[:10],fw_ipfs))
         download_btn.setEnabled(True)
 
     @pyqtSlot()
@@ -109,6 +109,9 @@ def main_qt():
         if not Web3.isAddress(user_variables.Contract_Address):
             Info.setText("{} is not a valid Ethereum Contract address".format(user_variables.Contract_Address))
             return
+        if user_node == None:
+            init_user()
+        global fw_ipfs
         fw_hash,fw_ipfs,fw_descr,fw_block,fw_dev,trust = user_node.get_most_trusted_fw()
         Info.setText("Firmware Preview:\n Description: {} \n IPFS Link: {} \n Trust: {}".format(fw_descr[:10],fw_ipfs,trust))
         download_btn.setEnabled(True)
@@ -189,9 +192,10 @@ def main_qt():
     operation_wdgt_lay.addWidget(prv_specific,1,2)
 
     prv_most = QPushButton("Preview")
+    prv_most.clicked.connect(get_most_trusted)
     operation_wdgt_lay.addWidget(QLabel("Preview most trusted firmware"),2,0,1,2)
     operation_wdgt_lay.addWidget(prv_most,2,2)
-
+    
     prv_mult = QPushButton("Preview multiple")
     operation_wdgt_lay.addWidget(QLabel("Preview multiple trusted firmware"),3,0,1,2)
     operation_wdgt_lay.addWidget(prv_mult,3,2)
@@ -200,7 +204,7 @@ def main_qt():
     mainLayout.addWidget(network_wdgt,0,0)
     mainLayout.addWidget(operation_wdgt,0,1)
     Info = QTextEdit("Log ....")
-    Info.setEnabled(False)
+    #Info.setEnabled(False)
     mainLayout.addWidget(Info,1,0,1,-1)
     download_btn = QPushButton("Download Firmware")
     download_btn.setEnabled(False)

@@ -4,14 +4,18 @@ from web3 import Web3
 sys.path.append("lib/")
 import matplotlib.pyplot as plt
 from Contract import *
+from Compact_Contract import *
 from bc_admin import *
 from ipfs_admin import *
 from Developer import *
 from User import *
 import util as u
 
+save_dir = './evaluation_scripts/Plots/'
+
 Mode_SHOW = 0
-experiment_size = 10
+Mode_SAVE = 1
+experiment_size = 50
 
 blockchain_admin = Blockchain_admin(local=True)
 m_web3 = blockchain_admin.getWeb3()
@@ -37,7 +41,48 @@ def plt_endorse_trust(mode):
     if mode == Mode_SHOW:
         plt.show()
     else:
-        fig.savefig('endorse_trust.png', dpi=fig.dpi)
+        fig.savefig(save_dir + 'endorse_trust.png', dpi=fig.dpi)
+
+def plt_revoke_trust(mode):
+    trusted_addr = u.generate_eth_pk(experiment_size)
+    for pk in trusted_addr:
+        tx_hash = contract.get_consice_instance().endorse_trust(pk, transact={'from': primary_acc})
+        txn_receipt = m_web3.eth.getTransactionReceipt(tx_hash)
+
+    tx_gas = []
+    x_axis = []
+    ii = 0
+    for pk in reversed(trusted_addr):
+        tx_hash = contract.get_consice_instance().revoke_trust(pk, transact={'from': primary_acc})
+        txn_receipt = m_web3.eth.getTransactionReceipt(tx_hash)
+        tx_gas.append(txn_receipt['cumulativeGasUsed'])
+        x_axis.append(experiment_size - ii)
+        ii += 1
+    
+    fig = plt.figure()   
+    plt.scatter(x_axis,tx_gas)
+    plt.title('Gas cost to revoke trust to a user')
+    plt.xlabel('Number of Trusted addresses')
+    plt.ylabel('Cumulative Gas Cost')
+    if mode == Mode_SHOW:
+        plt.show()
+    else:
+        fig.savefig(save_dir + 'revoke_trust.png', dpi=fig.dpi)
+
+
+
+def plt_hops_vs_gas(mode):
+    # Initialize and deploy contract
+    contract = Contract('contracts/webTrust.sol','Web_Of_Trust',m_web3,verbose=False)
+    contract.publish(blockchain_admin.get_account(0))
+    # Add addresses
+    tx_hash =contract.get_consice_instance().endorse_trust(blockchain_admin.get_account(1), transact={'from': blockchain_admin.get_account(0)})
+    # Wait for transaction to be mined...
+    m_web3.eth.waitForTransactionReceipt(tx_hash)
+    # Calculate Trust
+    tt = contract.get_consice_instance().hop_to_target(blockchain_admin.get_account(1),
+                                                       blockchain_admin.get_account(0))
+    print(tt) 
 
 def add_firmware_cost(mode):
     cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, verbose=False)
@@ -58,7 +103,7 @@ def add_firmware_cost(mode):
     if mode == Mode_SHOW:
         plt.show()
     else:
-        fig.savefig('add_firmware.png', dpi=fig.dpi)
+        fig.savefig(save_dir + 'add_firmware.png', dpi=fig.dpi)
 
 
 def add_firmware_variable_description(mode):
@@ -83,8 +128,8 @@ def add_firmware_variable_description(mode):
     if mode == Mode_SHOW:
         plt.show()
     else:
-        fig.savefig('add_firmware.png', dpi=fig.dpi)
+        fig.savefig(save_dir + 'add_firmware.png', dpi=fig.dpi)
 
 
-
-add_firmware_variable_description(Mode_SHOW)
+#plt_revoke_trust(Mode_SAVE)
+print("Web of Trust Deployment Gas Cost: {}".format(contract.deployment_cost))
