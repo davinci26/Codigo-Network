@@ -16,7 +16,6 @@ def make_request():
     r = requests.post("http://35.206.132.245:8020/test/")
     end = time.time()
     lock.acquire()
-    print("Made request")
     results.append(end-start)
     lock.release()
 
