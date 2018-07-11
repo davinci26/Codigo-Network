@@ -8,6 +8,9 @@ parser.add_argument('--node_index', type=int, nargs='?',
 parser.add_argument('--api_port', type=int, nargs='?',
                     help='IPFS API port')
 
+parser.add_argument('--nodes', type=int, nargs='?',
+                    help='Number of Nodes')
+
 parser.add_argument('--file_hash', type=str, nargs='?',
                     help='File IPFS link')
 
@@ -22,10 +25,11 @@ if __name__ == '__main__':
     now = datetime.datetime.now()
     print("Node {} downladed the file in {}".format(args.node_index,end-now))
     result_json = { 'Date-time': now.strftime("%Y-%m-%d %H%M"),
+                    'Users': args.nodes,
                     'Used Id': str(args.node_index)
                     'Time': str(end-now)}
 
-    with open("./evaluation_scripts/ipfs_node_{}_result.txt".format(args.node_index), 'a+') as dataf:
+    with open("./evaluation_scripts/ipfs_test/ipfs_node_{}_result.txt".format(args.node_index), 'a+') as dataf:
         json.dump(result_json, dataf)
         dataf.write('\n')
  
