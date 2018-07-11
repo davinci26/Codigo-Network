@@ -11,7 +11,7 @@ from Developer import *
 from User import *
 import util as u
 
-save_dir = './evaluation_scripts/Plots/'
+save_dir = './evaluation_scripts/eth_plots/'
 
 Mode_SHOW = 0
 Mode_SAVE = 1

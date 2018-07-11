@@ -11,7 +11,7 @@ def parse_line(line):
     delay_avg.append(d['Avg Time'])
     delay_std.append(d['Std Time'])
 
-filepath = './evaluation_scripts/results.txt'  
+filepath = './evaluation_scripts/server_test/results.txt'  
 with open(filepath) as fp:  
    line = fp.readline()
    while line:

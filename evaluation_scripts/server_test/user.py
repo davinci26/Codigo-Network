@@ -44,7 +44,7 @@ if __name__ == '__main__':
                         help='User increment')
 
     args = parser.parse_args()
-
+    filepath = './evaluation_scripts/server_test/results.txt'  
     for thread_no in range(1,args.Threads+1, args.Increment):
         make_simulation(thread_no)
         now = datetime.datetime.now()
@@ -55,7 +55,7 @@ if __name__ == '__main__':
                        'Std Time': np.std(results),
                        'Results': results }
 
-        with open("./evaluation_scripts/results.txt", 'a+') as dataf:
+        with open(filepath, 'a+') as dataf:
             json.dump(result_json, dataf)
             dataf.write('\n')
 
