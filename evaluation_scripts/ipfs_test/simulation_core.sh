@@ -13,7 +13,7 @@ do
     echo "Initialized ipfs deamons"
     for j in `seq 1 $k`
     do
-        python3 evaluation_scripts/ipfs_test/seeder.py --nodes $k --node_index $j --api_port `expr 5008 + $j` --file_hash $1 &
+        python3 evaluation_scripts/ipfs_test/seeder.py --nodes $k --node_index $j --api_port `expr 5008 + $j` --file_hash $1
     done
     sleep 5s
     #Clean up processes
