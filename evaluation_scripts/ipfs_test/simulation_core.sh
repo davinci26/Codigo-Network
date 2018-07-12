@@ -3,7 +3,6 @@ rm -rf ~/.ipfs_*
 kill $(pgrep -f 'ipfs daemon')
 for k in `seq 1 $2 $3`
 do
-    ipfs daemon &
     for i in `seq 1 $k`
     do
         IPFS_PATH=~/.ipfs_$i ipfs init
