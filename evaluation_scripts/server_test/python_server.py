@@ -18,5 +18,5 @@ def hello():
 
 if __name__ == '__main__':
     print("Server Started")
-    app.run(threaded =true, host = '0.0.0.0', port=8020 )
+    app.run(threaded = True, host = '0.0.0.0', port=8020 )
 
