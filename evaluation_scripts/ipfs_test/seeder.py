@@ -21,21 +21,31 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # Point to the correct ipfs daemon
     os.environ['IPFS_PATH'] = '~/.ipfs_' +  str(args.node_index)
-    print("API Port is {}".format(args.api_port))
+    print("===========Running node {} ==============".format(args.node_index))
     # Set up a temp dir to store the file and the results. This avoids collisions
     now = datetime.datetime.now()
     directory =  "evaluation_scripts/ipfs_test/temp_{}_{}".format(args.node_index,now.strftime("%Y-%m-%d_%H%M%S"))
-    print(directory)
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     # Import IPFS, download the file, and make store it in the temp dir
     import ipfsapi
-    api = ipfsapi.connect('127.0.0.1', args.api_port)
+    try:
+        api = ipfsapi.connect('127.0.0.1', args.api_port)
+    except:
+         time.sleep(5)
+         api = ipfsapi.connect('127.0.0.1', args.api_port)
+
     print("Connected to IPFS Deamon with port {}".format(args.api_port))
-    print("Retrieving file {}".format(args.file_hash))
+    print("Retrieving file {} started at time {}".format(args.file_hash, now.strftime("%Y-%m-%d_%H%M%S")))
     start = time.time()
-    api.get(args.file_hash, filepath = directory)
+    try:
+        api.get(args.file_hash, filepath = directory)
+    except:
+        time.sleep(5)
+        start = time.time()
+        api.get(args.file_hash, filepath = directory)
+        
     end = time.time()
     # Print and save results
     print("Node {} downladed the file in {}".format(args.node_index,end-start))

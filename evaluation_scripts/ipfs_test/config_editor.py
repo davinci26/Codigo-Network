@@ -11,7 +11,7 @@ if __name__ == '__main__':
     with open (ipfs_config_dir, "r") as inputf:
         config = json.load(inputf)
     
-    print(args.node_index)
+    print("Editing node {} configuration file".format(args.node_index))
 
     gateway_port = 9000 + int(args.node_index)
     swarm_port = 4002 + int(args.node_index)
