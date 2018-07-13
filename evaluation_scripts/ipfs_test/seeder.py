@@ -3,6 +3,7 @@ import os
 import time
 import datetime
 import json
+
 parser = argparse.ArgumentParser(description='Command Line Interface')
 parser.add_argument('--node_index', type=int, nargs='?',
                     help='IPFS Node index')
@@ -54,7 +55,7 @@ if __name__ == '__main__':
                     'Used Id': str(args.node_index),
                     'Time': str(end-start)}
 
-    with open("evaluation_scripts/ipfs_test/ipfs_node_{}_result.txt".format(args.node_index), 'a+') as dataf:
+    with open("evaluation_scripts/ipfs_test/ipfs_nodes_{}_result.txt".format(args.node_index), 'a+') as dataf:
         json.dump(result_json, dataf)
         dataf.write('\n')
  

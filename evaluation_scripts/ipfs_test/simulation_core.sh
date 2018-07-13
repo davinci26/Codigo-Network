@@ -21,6 +21,8 @@ do
         echo "=============================  Seeder: $j / $k ==================================="
     done
     while pgrep python > /dev/null; do sleep 1; done
+    #merge temp files
+    python3 evaluation_scripts/ipfs_test/merger.py --nodes $k
     #Clean up processes
     for i in `seq 1 $k`
     do
@@ -28,9 +30,10 @@ do
         IPFS_PATH=~/.ipfs_$i ipfs shutdown
     done
     rm -rf ~/.ipfs_*
+    rm ./evaluation_scripts/ipfs_test/ipfs_nodes_*
     echo "============================= Finished Iteration: $l / $3 ==================================="
 done
-
+rm -rf ./evaluation_scripts/ipfs_test/temp_*
 # Large: QmPZdXfEBLLogD8UZ4Ld9QSh2Q3P8jCQyPzrUCNtknFcNw
 # Small: QmNRcwA5oY1uyxYLimKneFLkrUjSJonrZ3V6nPBn2adFgB
 # Clean up in case of leftovers
