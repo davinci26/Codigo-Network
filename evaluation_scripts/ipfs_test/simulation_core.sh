@@ -13,7 +13,8 @@ do
         IPFS_PATH=~/.ipfs_$i ipfs daemon &
         echo "============================= Initalizing User: $i / $k ==================================="
     done
-    sleep 10s
+    inst=$(pgrep ipfs | wc -l)
+    while ( $inst <  `expr 1 + $k`); do inst=$(pgrep ipfs | wc -l); sleep 1; done
     echo "Initialized all ipfs deamons"
     for j in `seq 1 $k`
     do
