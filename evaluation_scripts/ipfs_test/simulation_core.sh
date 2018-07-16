@@ -5,11 +5,11 @@ kill $(pgrep -f 'ipfs daemon')
 while pgrep ipfs > /dev/null; do sleep 1; done
 # Spawn master IPFS node
 ipfs daemon &
-# For k IPFS nodes in range(1, step = $2, end = $3)
 for k in `seq 1 $2 $3`
+# For k IPFS nodes in range(1, step = $2, end = $3)
 do
-    # Spawn K fresh IPFS Nodes
     for i in `seq 1 $k`
+    # Spawn K fresh IPFS Nodes
     do
         IPFS_PATH=~/.ipfs_$i ipfs init
         python3 evaluation_scripts/ipfs_test/config_editor.py --node_index $i
@@ -23,7 +23,7 @@ do
     # Warm up the IPFS Nodes
     for i in `seq 1 $k`
     do
-        IPFS_PATH=~/.ipfs_$i {time ipfs cat QmeVELMStAfb6aWQD9zZSEDqJjo84Ht2T1Kkede1D54cj5;} 2> time.txt
+        IPFS_PATH=~/.ipfs_$i time ipfs cat QmeVELMStAfb6aWQD9zZSEDqJjo84Ht2T1Kkede1D54cj5
         echo "============================= Warm up Node: $i / $k ==================================="
     done
 
@@ -43,7 +43,7 @@ do
         IPFS_PATH=~/.ipfs_$i ipfs shutdown
     done
     rm -rf ~/.ipfs_*
-    rm ./evaluation_scripts/ipfs_test/ipfs_node_*
+    rm ./evaluation_scripts/ipfs_test/ipfs_nodes_*
     echo "============================= Finished Iteration: $l / $3 ==================================="
 done
 rm -rf ./evaluation_scripts/ipfs_test/temp_*

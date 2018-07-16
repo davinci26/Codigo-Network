@@ -4,6 +4,8 @@ examples/*
 logs/*
 evaluation_scripts/ipfs_test/temp_*
 evaluation_scripts/ipfs_test/*.txt
+.DS_Store
+evaluation_scripts/.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
