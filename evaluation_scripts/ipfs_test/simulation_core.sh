@@ -31,7 +31,7 @@ do
         IPFS_PATH=~/.ipfs_$i ipfs shutdown
     done
     rm -rf ~/.ipfs_*
-    rm ./evaluation_scripts/ipfs_test/ipfs_nodes_*
+    rm ./evaluation_scripts/ipfs_test/ipfs_node_*
     echo "============================= Finished Iteration: $l / $3 ==================================="
 done
 rm -rf ./evaluation_scripts/ipfs_test/temp_*
