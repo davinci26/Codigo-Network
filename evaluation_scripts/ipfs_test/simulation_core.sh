@@ -6,7 +6,7 @@ kill $(pgrep -f 'ipfs daemon')
 while pgrep ipfs > /dev/null; do sleep 1; done
 # Spawn master IPFS node
 ipfs daemon &
-for k in `seq 1 $2 $3`
+for k in `seq $2 $3 $4`
 # For k IPFS nodes in range(1, step = $2, end = $3)
 do
     for i in `seq 1 $k`

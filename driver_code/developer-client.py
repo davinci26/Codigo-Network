@@ -69,6 +69,7 @@ def main_qt():
     from PyQt5.QtWidgets import (QApplication, QWidget,QLabel,QCheckBox, QFormLayout,
     QLineEdit, QComboBox,QGroupBox, QGridLayout,QTextEdit,QPushButton, QFileDialog, QSpinBox)
     from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
+    from PyQt5.QtGui import QPixmap
 
     @pyqtSlot(int)
     def enable_selection(v):
@@ -122,6 +123,7 @@ def main_qt():
                          "Pushed the following firmware to IPFS and Ethereum \n" + str(uploaded_fw[0]))
 
     app = QApplication(sys.argv)
+    
     mainWdgt = QWidget()
     mainWdgt.setWindowTitle('Codigo Network Developer Client')
     
