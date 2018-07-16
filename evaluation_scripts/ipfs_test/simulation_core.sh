@@ -5,10 +5,10 @@ truncate -s 0 ./evaluation_scripts/ipfs_test/result.txt
 kill $(pgrep -f 'ipfs daemon')
 while pgrep ipfs > /dev/null; do sleep 1; done
 # Spawn master IPFS node
-ipfs daemon &
 for k in `seq $2 $3 $4`
 # For k IPFS nodes in range(1, step = $2, end = $3)
 do
+    ipfs daemon &
     for i in `seq 1 $k`
     # Spawn K fresh IPFS Nodes
     do
@@ -42,12 +42,8 @@ do
     #merge temp files
     python3 evaluation_scripts/ipfs_test/merger.py --nodes $k
     #Clean up processes
-    for i in `seq 1 $k`
-    do
-        IPFS_PATH=~/.ipfs_$i ipfs shutdown
-        IPFS_PATH=~/.ipfs_$i ipfs shutdown
-         echo "=============================  Closing: $i / $k ==================================="
-    done
+    kill $(pgrep -f 'ipfs daemon')
+    kill $(pgrep -f 'ipfs daemon')
     rm -rf ~/.ipfs_*
     rm ./evaluation_scripts/ipfs_test/ipfs_nodes_*
     echo "============================= Finished Iteration: $l / $3 ==================================="
