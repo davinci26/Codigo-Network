@@ -18,13 +18,15 @@ def plot(filepath):
             parse_line(line)
             line = fp.readline()
 
-    plt.scatter(user_no, delay_avg)#, yerr=delay_std)
+    plt.errorbar(user_no, delay_avg, yerr = delay_std, fmt='o' )
+    plt.xlabel('Number of Nodes')
+    plt.ylabel('Average delay[m]')
 
 
 ipfs_path = './evaluation_scripts/ipfs_test/result.txt'
 server_path = './evaluation_scripts/server_test/results.txt'
 
 plot(ipfs_path)
-plot(server_path)
+#plot(server_path)
 
 plt.show()

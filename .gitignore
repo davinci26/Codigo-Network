@@ -3,6 +3,7 @@ Reports/meeting_notes
 examples/*
 logs/*
 evaluation_scripts/ipfs_test/temp_*
+evaluation_scripts/ipfs_test/*.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

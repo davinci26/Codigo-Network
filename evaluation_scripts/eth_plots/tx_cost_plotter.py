@@ -182,4 +182,4 @@ def add_firmware_variable_description(mode):
 # pow_cost(Mode_SHOW)
 #print("Web of Trust Deployment Gas Cost: {}".format(contract.deployment_cost))
 
-plt_revoke_trust(Mode_SAVE)
+add_firmware_cost(Mode_SAVE)
