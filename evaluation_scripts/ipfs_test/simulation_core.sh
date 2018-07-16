@@ -16,15 +16,18 @@ do
         IPFS_PATH=~/.ipfs_$i ipfs daemon &
         echo "============================= Initalizing User: $i / $k ==================================="
     done
-    echo "Initialized all ipfs deamons"
-    inst=$(pgrep ipfs | wc -l)
-    while ( $inst <  `expr 1 + $k`); do inst=$(pgrep ipfs | wc -l); sleep 1; done
-
-    # Warm up the IPFS Nodes
-    for i in `seq 1 $k`
+    
+    while ! curl --silent localhost:`expr 5008 + $k`
+    # Wait for the last deamon to be fully initialized
     do
-        IPFS_PATH=~/.ipfs_$i time ipfs cat QmeVELMStAfb6aWQD9zZSEDqJjo84Ht2T1Kkede1D54cj5
-        echo "============================= Warm up Node: $i / $k ==================================="
+        echo "I wait"
+        sleep 1
+    done
+
+    for l in `seq 1 $k`
+    do
+        IPFS_PATH=~/.ipfs_$l time ipfs cat QmeVELMStAfb6aWQD9zZSEDqJjo84Ht2T1Kkede1D54cj5
+        echo "============================= Warm up Node: $l / $k ==================================="
     done
 
     # Download IPFS Nodes
