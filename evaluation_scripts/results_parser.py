@@ -47,9 +47,10 @@ ipfs_path = './evaluation_scripts/ipfs_test/result.txt'
 server_path = './evaluation_scripts/server_test/results.txt'
 
 
-statistics(ipfs_path)
+#statistics(ipfs_path)
 
 
-#plot(ipfs_path)
+plot(ipfs_path)
+plt.show()
 #plot(server_path)
 #plt.show()

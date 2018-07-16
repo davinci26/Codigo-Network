@@ -46,6 +46,7 @@ do
     do
         IPFS_PATH=~/.ipfs_$i ipfs shutdown
         IPFS_PATH=~/.ipfs_$i ipfs shutdown
+         echo "=============================  Closing: $i / $k ==================================="
     done
     rm -rf ~/.ipfs_*
     rm ./evaluation_scripts/ipfs_test/ipfs_nodes_*
