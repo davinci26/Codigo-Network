@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 rm -rf ~/.ipfs_* # Kill leftovers from previous run that did not terminate succesfully
 rm -rf ./evaluation_scripts/ipfs_test/temp_*
+truncate -s 0 ./evaluation_scripts/ipfs_test/result.txt
 kill $(pgrep -f 'ipfs daemon')
 while pgrep ipfs > /dev/null; do sleep 1; done
 # Spawn master IPFS node
@@ -19,6 +20,7 @@ do
     
     while ! curl --silent localhost:`expr 5008 + $k`
     # Wait for the last deamon to be fully initialized
+    # Hack from go-ipfs issue #862
     do
         echo "I wait"
         sleep 1
@@ -51,7 +53,7 @@ do
 done
 rm -rf ./evaluation_scripts/ipfs_test/temp_*
 
-# ========================================= USAGE =========================================
+# ========================================= HOW TO USE =========================================
 # To Run: evaluation_scripts/ipfs_test/simulation_core.sh QmNRcwA5oY1uyxYLimKneFLkrUjSJonrZ3V6nPBn2adFgB 1 2
 # Large: QmPZdXfEBLLogD8UZ4Ld9QSh2Q3P8jCQyPzrUCNtknFcNw
 # Small: QmNRcwA5oY1uyxYLimKneFLkrUjSJonrZ3V6nPBn2adFgB

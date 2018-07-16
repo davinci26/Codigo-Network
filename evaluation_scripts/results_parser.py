@@ -20,7 +20,7 @@ def plot(filepath):
 
     plt.errorbar(user_no, delay_avg, yerr = delay_std, fmt='o' )
     plt.xlabel('Number of Nodes')
-    plt.ylabel('Average delay[m]')
+    plt.ylabel('Average delay[sec]')
 
 
 ipfs_path = './evaluation_scripts/ipfs_test/result.txt'
