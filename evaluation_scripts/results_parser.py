@@ -1,21 +1,30 @@
 import json
 import matplotlib.pyplot as plt
 
-user_no = []
-delay_avg = []
-delay_std = []
+def plot(filepath):
+    user_no = []
+    delay_avg = []
+    delay_std = []
 
-def parse_line(line):
-    d = json.loads(line)
-    user_no.append(d['Users'])
-    delay_avg.append(float(d['Time']))
+    def parse_line(line):
+        d = json.loads(line)
+        user_no.append(d['Users'])
+        delay_avg.append(d['Avg Time'])
+        delay_std.append(d['Std Time'])
     
-filepath = './evaluation_scripts/ipfs_test/ipfs_node_1_result.txt'  
-with open(filepath) as fp:  
-   line = fp.readline()
-   while line:
-        parse_line(line)
+    with open(filepath) as fp:  
         line = fp.readline()
+        while line:
+            parse_line(line)
+            line = fp.readline()
 
-plt.scatter(user_no, delay_avg)
+    plt.scatter(user_no, delay_avg)#, yerr=delay_std)
+
+
+ipfs_path = './evaluation_scripts/ipfs_test/result.txt'
+server_path = './evaluation_scripts/server_test/results.txt'
+
+plot(ipfs_path)
+plot(server_path)
+
 plt.show()

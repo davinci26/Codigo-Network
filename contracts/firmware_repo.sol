@@ -59,6 +59,38 @@ contract FirmwareRepo{
         return web_trust_addr;
     }
 
+
+    mapping(address => bytes32) current_challenge;
+    mapping(address => uint) timeOfLastProof;
+    mapping(address => uint) difficulty;
+    function get_d() public view returns(uint) {return difficulty[msg.sender];}
+    function get_t() public view returns(uint) {return timeOfLastProof[msg.sender];}
+    function get_c() public view returns(bytes32) {return current_challenge[msg.sender];}
+
+    function proofOfWork(uint nonce) public {
+        
+        // Calculate the difficulty
+        uint timeSinceLastProof = (now - timeOfLastProof[msg.sender]);
+        if (timeSinceLastProof > 1 days){
+            // Reset Difficulty
+            difficulty[msg.sender] = 10**20;
+        } else{
+            // Exponentiate Difficulty
+            difficulty[msg.sender] = difficulty[msg.sender]/100;
+        }
+        bytes8 n = bytes8(keccak256(nonce, current_challenge[msg.sender]));    // Generate a random hash based on input
+        require(n <= bytes8(difficulty[msg.sender]));                 // Check if it's under the difficulty
+
+
+        timeOfLastProof[msg.sender] = now;
+        current_challenge[msg.sender] = keccak256(nonce,
+                                                  current_challenge[msg.sender],
+                                                  block.blockhash(block.number - 1));  // Save a hash that will be used as the next proof
+    }
+
+
+
+
     /** Interface Target for Developers *
     ************************************/
 
@@ -77,7 +109,6 @@ contract FirmwareRepo{
         require(!is_empty(description_));
         require(!is_empty(device_type_));
         uint8 firmware_index = (stable) ? 0 : 1;
-
         // If I have no firmware from that dev, then add him to the list
         if (developed_firmware[device_type_][msg.sender][0].firmware_hash[0] == 0 &&
             developed_firmware[device_type_][msg.sender][1].firmware_hash[0] == 0 ){
