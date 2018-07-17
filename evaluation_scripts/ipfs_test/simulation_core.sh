@@ -66,7 +66,8 @@ do
     echo "============================= Finished Iteration: $k / $4 ==================================="
     k_prv=`expr $k + 1`
 done
-rm -rf ./evaluation_scripts/ipfs_test/temp_*
+kill $(pgrep -f 'ipfs daemon')
+rm -rf ~/.ipfs_*
 
 # ========================================= HOW TO USE =========================================
 # To Run: evaluation_scripts/ipfs_test/simulation_core.sh QmNRcwA5oY1uyxYLimKneFLkrUjSJonrZ3V6nPBn2adFgB 1 2
