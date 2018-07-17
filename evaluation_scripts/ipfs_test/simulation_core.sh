@@ -4,12 +4,24 @@ rm -rf ./evaluation_scripts/ipfs_test/temp_*
 truncate -s 0 ./evaluation_scripts/ipfs_test/result.txt
 kill $(pgrep -f 'ipfs daemon')
 while pgrep ipfs > /dev/null; do sleep 1; done
+
 # Spawn master IPFS node
+ipfs daemon &
+
+for jj in `seq 1 $2`
+    do
+    IPFS_PATH=~/.ipfs_$jj ipfs init
+    python3 evaluation_scripts/ipfs_test/config_editor.py --node_index $jj
+    IPFS_PATH=~/.ipfs_$jj ipfs daemon &
+    echo "============================= Initalizing User: $jj / $2 ==================================="
+    done
+
+k_prv=`expr $2 + 1`
+
 for k in `seq $2 $3 $4`
 # For k IPFS nodes in range(1, step = $2, end = $3)
 do
-    ipfs daemon &
-    for i in `seq 1 $k`
+    for i in `seq $k_prv $k`
     # Spawn K fresh IPFS Nodes
     do
         IPFS_PATH=~/.ipfs_$i ipfs init
@@ -42,11 +54,17 @@ do
     #merge temp files
     python3 evaluation_scripts/ipfs_test/merger.py --nodes $k
     #Clean up processes
-    kill $(pgrep -f 'ipfs daemon')
-    kill $(pgrep -f 'ipfs daemon')
-    rm -rf ~/.ipfs_*
+    for ii in `seq 1 $k`
+    do
+        IPFS_PATH=~/.ipfs_$ii ipfs pin rm $1
+        IPFS_PATH=~/.ipfs_$ii ipfs block rm $1
+        IPFS_PATH=~/.ipfs_$ii ipfs pin rm QmeVELMStAfb6aWQD9zZSEDqJjo84Ht2T1Kkede1D54cj5
+        IPFS_PATH=~/.ipfs_$ii ipfs block rm QmeVELMStAfb6aWQD9zZSEDqJjo84Ht2T1Kkede1D54cj5
+    done
     rm ./evaluation_scripts/ipfs_test/ipfs_nodes_*
-    echo "============================= Finished Iteration: $l / $3 ==================================="
+    rm -rf ./evaluation_scripts/ipfs_test/temp_*
+    echo "============================= Finished Iteration: $k / $4 ==================================="
+    k_prv=`expr $k + 1`
 done
 rm -rf ./evaluation_scripts/ipfs_test/temp_*
 
