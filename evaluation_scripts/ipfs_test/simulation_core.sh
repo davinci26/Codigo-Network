@@ -34,7 +34,7 @@ do
     # Wait for the last deamon to be fully initialized
     # Hack from go-ipfs issue #862
     do
-        echo "I wait"
+        echo "I wait for deamons to be initialized fully"
         sleep 1
     done
 
@@ -60,6 +60,7 @@ do
         IPFS_PATH=~/.ipfs_$ii ipfs block rm $1
         IPFS_PATH=~/.ipfs_$ii ipfs pin rm QmeVELMStAfb6aWQD9zZSEDqJjo84Ht2T1Kkede1D54cj5
         IPFS_PATH=~/.ipfs_$ii ipfs block rm QmeVELMStAfb6aWQD9zZSEDqJjo84Ht2T1Kkede1D54cj5
+        echo "=============================  Cleaning up: $ii / $k ==================================="
     done
     rm ./evaluation_scripts/ipfs_test/ipfs_nodes_*
     rm -rf ./evaluation_scripts/ipfs_test/temp_*

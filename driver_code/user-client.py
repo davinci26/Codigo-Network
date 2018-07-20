@@ -180,7 +180,7 @@ def main_qt():
     trust_dev_wdgt = QLineEdit()
     trust_dev = QPushButton("Trust")
     trust_dev.clicked.connect(endorse_dev)
-    operation_wdgt_lay.addWidget(QLabel("Trust Developer with Pk"),0,0)
+    operation_wdgt_lay.addWidget(QLabel("Trust Developer with PK"),0,0)
     operation_wdgt_lay.addWidget(trust_dev_wdgt,0,1)
     operation_wdgt_lay.addWidget(trust_dev,0,2)
 
