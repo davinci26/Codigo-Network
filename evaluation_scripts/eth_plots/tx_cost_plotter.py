@@ -2,6 +2,7 @@ import sys
 import numpy as np
 from web3 import Web3
 sys.path.append("lib/")
+import matplotlib 
 import matplotlib.pyplot as plt
 from Contract import *
 from Compact_Contract import *
@@ -97,7 +98,8 @@ def pow_cost(mode):
     # Push Firmware
     attempts = []
     difficulty = []
-    for i in range(0,experiment_size):
+    exp_size = 3
+    for i in range(0,exp_size):
         current_gas = 0
         pow_found = False
         nonce = 1
@@ -111,25 +113,39 @@ def pow_cost(mode):
         attempts.append(nonce)
         difficulty.append(cc.get_def_instance().functions.get_d().call())
         print("Current dif {} iteration {}".format(cc.get_def_instance().functions.get_d().call(),i))
-    fig = plt.figure(1)
-    plt.subplot(211)
-    plt.locator_params(nbins=12)
-    plt.scatter(np.arange(1,experiment_size+1),attempts)
-    plt.title('Cost for adding a new firmware')
-    plt.xlabel('Firmware Added')
-    plt.ylabel('Sha3 Computations')
-
-    plt.subplot(212)
-    plt.locator_params(nbins=12)
-    plt.scatter(np.arange(1,experiment_size+1),difficulty)
-    plt.title('Difficulty')
-    plt.xlabel('Firmware Added')
-    plt.ylabel('PoW Target')
+    
 
     if mode == Mode_SHOW:
-        plt.show()
+        fig = plt.figure(1)
+        plt.subplot(211)
+        plt.locator_params(nbins=12)
+        plt.scatter(np.arange(1,exp_size+1),attempts)
+        #plt.title('Cost for adding a new firmware')
+        plt.xlabel('Firmware Added')
+        plt.ylabel('Sha3 Computations')
+        plt.subplot(212)
+        plt.locator_params(nbins=12)
+        plt.scatter(np.arange(1,exp_size+1),difficulty)
+        #plt.title('Difficulty')
+        plt.xlabel('Firmware Added')
+        plt.ylabel('PoW Target')
+        fig.show()
+
     else:
-        fig.savefig(save_dir + 'add_firmware.png', dpi=fig.dpi)
+        fig = plt.figure()
+        plt.locator_params(nbins=12)
+        plt.scatter(np.arange(1,exp_size+1),attempts)
+        #plt.title('Cost for adding a new firmware')
+        plt.xlabel('Firmware Added')
+        plt.ylabel('Sha3 Computations')
+        fig.savefig(save_dir + 'Pow-Sha3.png', dpi=fig.dpi)
+        fig = plt.figure()
+        plt.locator_params(nbins=12)
+        plt.scatter(np.arange(1,exp_size+1),difficulty)
+        plt.xlabel('Firmware Added')
+        plt.ylabel('Difficulty')
+        fig.savefig(save_dir + 'Pow-Diff.png', dpi=fig.dpi)
+
         
 
 def add_firmware_cost(mode):
@@ -182,4 +198,4 @@ def add_firmware_variable_description(mode):
 # pow_cost(Mode_SHOW)
 #print("Web of Trust Deployment Gas Cost: {}".format(contract.deployment_cost))
 
-add_firmware_cost(Mode_SAVE)
+pow_cost(Mode_SAVE)
