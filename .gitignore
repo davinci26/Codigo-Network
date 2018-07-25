@@ -2,8 +2,11 @@
 Reports/meeting_notes
 examples/*
 logs/*
-evaluation_scripts/ipfs_test/temp_*
-evaluation_scripts/ipfs_test/*.txt
+evaluation_scripts/ipfs_test/
+evaluation_scripts/bittorent_test/
+evaluation_scripts/server_test
+evaluation_scripts/ipfs_plots
+evaluation_scripts/results_parser.py
 .DS_Store
 evaluation_scripts/.DS_Store
 
