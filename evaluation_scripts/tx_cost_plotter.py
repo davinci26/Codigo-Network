@@ -46,16 +46,22 @@ def eth_plotter_format(mode,tx_gas,x_ticks,x_label,filename):
 def pow_plotter(mode, difficulty,attempts,diff_err,attempts_error,exp_size):
     fig = plt.figure(1)
     plt.subplot(211)
-    plt.locator_params(nbins=12)
-    plt.scatter(np.arange(1,exp_size+1),attempts)
+    #plt.locator_params(nbins=12)
+    x = np.arange(1,exp_size+1)
+    plt.errorbar(x,attempts,yerr=attempts_error,fmt='o')
+    plt.xticks(np.arange(1, 4, step=1))
     plt.xlabel('Firmware Added')
     plt.ylabel('Sha3 Computations')
     plt.subplot(212)
-    plt.locator_params(nbins=12)
-    plt.scatter(np.arange(1,exp_size+1),difficulty)
+    plt.scatter(x,difficulty)
+    plt.xticks(np.arange(1, 4, step=1))
     plt.xlabel('Firmware Added')
     plt.ylabel('PoW Target')
-    fig.show()
+    if mode == Mode_SHOW:
+        plt.show()
+    else:
+        fig.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
+        fig.savefig(save_dir + 'pow_cost' +'.png',bbox_inches='tight')
 
 
 def plt_endorse_trust(mode):
@@ -106,18 +112,15 @@ def plt_hops_vs_gas(mode):
 
 
 def plt_pow_cost(mode):
-    cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, verbose=False)
-    cc.publish(blockchain_admin.get_account(0))
-    # Create Developer node with PK(1)
-    developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(0), "Test", ipfs_admin)
-    # Push Firmware
-    exp_size = 10
-    attempts_per_exp = 2
+    exp_size = 20
+    attempts_per_exp = 3
     difficulty = np.zeros((exp_size,attempts_per_exp))
     attempts = np.zeros((exp_size,attempts_per_exp))
-    for ii in range(0,exp_size):
+    for ii in range(0,exp_size+1):
+        cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, verbose=False)
+        cc.publish(blockchain_admin.get_account(0))
         print("========= Experiment {}/{} =========".format(ii,exp_size))
-        for i in range(0,attempts_per_exp):
+        for i in range(0,attempts_per_exp+1):
             current_gas = 0
             pow_found = False
             nonce = 1
@@ -130,42 +133,13 @@ def plt_pow_cost(mode):
                     nonce += 1
             difficulty[ii][i] = cc.get_def_instance().functions.get_d().call()
             attempts[ii][i] = nonce
-        print("Current dif {} iteration {}".format(cc.get_def_instance().functions.get_d().call(),i))
+            print("Current dif {}, attempts {} iteration {}".format(cc.get_def_instance().functions.get_d().call(),nonce,i))
         
     pow_plotter(mode, np.mean(difficulty,axis=0),
                       np.mean(attempts,axis=0),
                       np.std(difficulty,axis=0),
                       np.std(attempts,axis=0),
                       attempts_per_exp)
-
-    # if mode == Mode_SHOW:
-    #     fig = plt.figure(1)
-    #     plt.subplot(211)
-    #     plt.locator_params(nbins=12)
-    #     plt.scatter(np.arange(1,exp_size+1),attempts)
-    #     plt.xlabel('Firmware Added')
-    #     plt.ylabel('Sha3 Computations')
-    #     plt.subplot(212)
-    #     plt.locator_params(nbins=12)
-    #     plt.scatter(np.arange(1,exp_size+1),difficulty)
-    #     plt.xlabel('Firmware Added')
-    #     plt.ylabel('PoW Target')
-    #     fig.show()
-
-    # else:
-    #     fig = plt.figure()
-    #     plt.locator_params(nbins=12)
-    #     plt.scatter(np.arange(1,exp_size+1),attempts)
-    #     plt.xlabel('Firmware Added')
-    #     plt.ylabel('Sha3 Computations')
-    #     fig.savefig(save_dir + 'Pow-Sha3.png', dpi=fig.dpi)
-    #     fig = plt.figure()
-    #     plt.locator_params(nbins=12)
-    #     plt.scatter(np.arange(1,exp_size+1),difficulty)
-    #     plt.xlabel('Firmware Added')
-    #     plt.ylabel('Difficulty')
-    #     fig.savefig(save_dir + 'Pow-Diff.png', dpi=fig.dpi)
-
         
 def plt_add_firmware_cost(mode):
     cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, verbose=False)

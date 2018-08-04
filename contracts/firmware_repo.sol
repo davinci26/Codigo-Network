@@ -74,13 +74,13 @@ contract FirmwareRepo{
         uint timeSinceLastProof = (now - timeOfLastProof[msg.sender]);
         if (timeSinceLastProof > 1 days){
             // Reset Difficulty
-            difficulty[msg.sender] = 10**20;
+            difficulty[msg.sender] = 10**77;
         } else{
             // Exponentiate Difficulty
-            difficulty[msg.sender] = difficulty[msg.sender]/100;
+            difficulty[msg.sender] = difficulty[msg.sender]/50;
         }
-        bytes8 n = bytes8(keccak256(nonce, current_challenge[msg.sender]));    // Generate a random hash based on input
-        require(n <= bytes8(difficulty[msg.sender]));                 // Check if it's under the difficulty
+        bytes32 n = keccak256(nonce, current_challenge[msg.sender]);    // Generate a random hash based on input
+        require(n <= bytes32(difficulty[msg.sender]));                 // Check if it's under the difficulty
 
 
         timeOfLastProof[msg.sender] = now;
