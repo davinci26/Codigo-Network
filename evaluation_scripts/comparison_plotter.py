@@ -13,8 +13,8 @@ def parse_single_line(line, filepath):
     if users == len(d['Results']) or users - 1 == len(d['Results']):
         return d['Users'], d['Avg_Time'],d['Std_Time'], np.max(d['Results']),np.min(d['Results']),d['Results']
     else:
-        print("Simulation with {} Users failed at {} \n Results length: {}".format(users,filepath,len(d['Results'])))
-
+        pass
+        #print("Simulation with {} Users failed at {} \n Results length: {}".format(users,filepath,len(d['Results'])))
 
 def parse_file(filepath):
     user_no = []
@@ -38,18 +38,19 @@ def parse_file(filepath):
     return user_no, delay_avg, delay_std, delay_max, delay_min, results
 
 
-def plot(filepath,label,colour_):
+def plot(filepath,label,colour_,limit):
     user_no, delay_avg, delay_std, delay_max, delay_min,_ = parse_file(filepath)
-    plt.plot(user_no, delay_avg,'o--', color=colour_, label=label + " Average delay",ms=3) #, yerr = delay_std, fmt='o' )
-    plt.plot(user_no, delay_max,'--', color=colour_,  label=label + " Max delay",alpha=0.3) 
-    plt.plot(user_no, delay_min,'--', color=colour_,label=label + " Min delay",alpha=0.3) 
-    plt.fill_between(user_no,
-                     delay_max,
-                     delay_min,
+    plt.plot(user_no[:limit], delay_avg[:limit],'o--', color=colour_, label=label + " Average delay",ms=3) #, yerr = delay_std, fmt='o' )
+    plt.plot(user_no[:limit], delay_max[:limit],'--', color=colour_,  label=label + " Max delay",alpha=0.3) 
+    plt.plot(user_no[:limit], delay_min[:limit],'--', color=colour_,label=label + " Min delay",alpha=0.3) 
+    plt.fill_between(user_no[:limit],
+                     delay_max[:limit],
+                     delay_min[:limit],
                      color =colour_,
                      alpha=0.2 )
     plt.xlabel('Number of Nodes')
     plt.ylabel('Average delay[sec]')
+    plt.xlim(0,limit)
 
 
 def statistics(filepath):
@@ -68,32 +69,32 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Command Line Interface')
     parser.add_argument('-o', type=str, nargs='?',
                         help="Save output to the specified directory")
-    parser.add_argument('-IPFS', action='store_true', default = True,
+    parser.add_argument('-IPFS', action='store_true', default = False,
                     help='Show IPFS performance')
+    parser.add_argument('-user_limit', type=int, nargs='?', default = 150,
+                    help='Limit number of users')
     parser.add_argument('-BitTorrent', action='store_true', default = False,
                     help='Show BitTorrent performance') 
     parser.add_argument('-client_server', action='store_true', default = False,
                     help='Show Client Server performance')   
     parser.add_argument('-statistics', action='store_true', default = False,
                     help='Print statistics')
-    parser.add_argument('-save', action='store_true', default = False,
-                    help='Save the plots')
     args = parser.parse_args()
     fig, ax1 = plt.subplots()
 
     if args.IPFS:
-        plot(ipfs_path, "IPFS",'blue')
+        plot(ipfs_path, "IPFS",'blue',args.user_limit)
         if args.statistics:
             statistics(ipfs_path)
     if args.BitTorrent:
-        plot(bittorent_path,"BitTorrent",'orange')
+        plot(bittorent_path,"BitTorrent",'orange',args.user_limit)
         if args.statistics:
             statistics(bittorent_path)
     if args.client_server:
-        plot(server_path,"Client Server",'red')
+        plot(server_path,"Client Server",'red',args.user_limit)
 
     plt.legend()
-    if args.save:
+    if args.o != None:
         fig.savefig(save_dir + args.o +'.png',bbox_inches='tight') 
     else:
         plt.show()

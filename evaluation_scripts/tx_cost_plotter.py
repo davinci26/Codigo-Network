@@ -42,6 +42,22 @@ def eth_plotter_format(mode,tx_gas,x_ticks,x_label,filename):
     else:
         fig.savefig(save_dir + filename +'.png',bbox_inches='tight')
 
+
+def pow_plotter(mode, difficulty,attempts,diff_err,attempts_error,exp_size):
+    fig = plt.figure(1)
+    plt.subplot(211)
+    plt.locator_params(nbins=12)
+    plt.scatter(np.arange(1,exp_size+1),attempts)
+    plt.xlabel('Firmware Added')
+    plt.ylabel('Sha3 Computations')
+    plt.subplot(212)
+    plt.locator_params(nbins=12)
+    plt.scatter(np.arange(1,exp_size+1),difficulty)
+    plt.xlabel('Firmware Added')
+    plt.ylabel('PoW Target')
+    fig.show()
+
+
 def plt_endorse_trust(mode):
     trusted_addr = u.generate_eth_pk(experiment_size)
     tx_gas = []
@@ -89,64 +105,68 @@ def plt_hops_vs_gas(mode):
     print(tt) 
 
 
-def pow_cost(mode):
+def plt_pow_cost(mode):
     cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, verbose=False)
     cc.publish(blockchain_admin.get_account(0))
     # Create Developer node with PK(1)
     developer_node = Developer_Node(m_web3, cc, blockchain_admin.get_account(0), "Test", ipfs_admin)
     # Push Firmware
-    attempts = []
-    difficulty = []
-    exp_size = 3
-    for i in range(0,exp_size):
-        current_gas = 0
-        pow_found = False
-        nonce = 1
-        while (not pow_found):
-            try:
-                tx_hash = cc.get_def_instance().functions.proofOfWork(nonce).transact()
-                pow_found = True
-            except:
-                pow_found = False
-                nonce += 1
-        attempts.append(nonce)
-        difficulty.append(cc.get_def_instance().functions.get_d().call())
+    exp_size = 10
+    attempts_per_exp = 2
+    difficulty = np.zeros((exp_size,attempts_per_exp))
+    attempts = np.zeros((exp_size,attempts_per_exp))
+    for ii in range(0,exp_size):
+        print("========= Experiment {}/{} =========".format(ii,exp_size))
+        for i in range(0,attempts_per_exp):
+            current_gas = 0
+            pow_found = False
+            nonce = 1
+            while (not pow_found):
+                try:
+                    tx_hash = cc.get_def_instance().functions.proofOfWork(nonce).transact()
+                    pow_found = True
+                except:
+                    pow_found = False
+                    nonce += 1
+            difficulty[ii][i] = cc.get_def_instance().functions.get_d().call()
+            attempts[ii][i] = nonce
         print("Current dif {} iteration {}".format(cc.get_def_instance().functions.get_d().call(),i))
-    
+        
+    pow_plotter(mode, np.mean(difficulty,axis=0),
+                      np.mean(attempts,axis=0),
+                      np.std(difficulty,axis=0),
+                      np.std(attempts,axis=0),
+                      attempts_per_exp)
 
-    if mode == Mode_SHOW:
-        fig = plt.figure(1)
-        plt.subplot(211)
-        plt.locator_params(nbins=12)
-        plt.scatter(np.arange(1,exp_size+1),attempts)
-        #plt.title('Cost for adding a new firmware')
-        plt.xlabel('Firmware Added')
-        plt.ylabel('Sha3 Computations')
-        plt.subplot(212)
-        plt.locator_params(nbins=12)
-        plt.scatter(np.arange(1,exp_size+1),difficulty)
-        #plt.title('Difficulty')
-        plt.xlabel('Firmware Added')
-        plt.ylabel('PoW Target')
-        fig.show()
+    # if mode == Mode_SHOW:
+    #     fig = plt.figure(1)
+    #     plt.subplot(211)
+    #     plt.locator_params(nbins=12)
+    #     plt.scatter(np.arange(1,exp_size+1),attempts)
+    #     plt.xlabel('Firmware Added')
+    #     plt.ylabel('Sha3 Computations')
+    #     plt.subplot(212)
+    #     plt.locator_params(nbins=12)
+    #     plt.scatter(np.arange(1,exp_size+1),difficulty)
+    #     plt.xlabel('Firmware Added')
+    #     plt.ylabel('PoW Target')
+    #     fig.show()
 
-    else:
-        fig = plt.figure()
-        plt.locator_params(nbins=12)
-        plt.scatter(np.arange(1,exp_size+1),attempts)
-        #plt.title('Cost for adding a new firmware')
-        plt.xlabel('Firmware Added')
-        plt.ylabel('Sha3 Computations')
-        fig.savefig(save_dir + 'Pow-Sha3.png', dpi=fig.dpi)
-        fig = plt.figure()
-        plt.locator_params(nbins=12)
-        plt.scatter(np.arange(1,exp_size+1),difficulty)
-        plt.xlabel('Firmware Added')
-        plt.ylabel('Difficulty')
-        fig.savefig(save_dir + 'Pow-Diff.png', dpi=fig.dpi)
+    # else:
+    #     fig = plt.figure()
+    #     plt.locator_params(nbins=12)
+    #     plt.scatter(np.arange(1,exp_size+1),attempts)
+    #     plt.xlabel('Firmware Added')
+    #     plt.ylabel('Sha3 Computations')
+    #     fig.savefig(save_dir + 'Pow-Sha3.png', dpi=fig.dpi)
+    #     fig = plt.figure()
+    #     plt.locator_params(nbins=12)
+    #     plt.scatter(np.arange(1,exp_size+1),difficulty)
+    #     plt.xlabel('Firmware Added')
+    #     plt.ylabel('Difficulty')
+    #     fig.savefig(save_dir + 'Pow-Diff.png', dpi=fig.dpi)
 
         
-
 def plt_add_firmware_cost(mode):
     cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, verbose=False)
     cc.publish(blockchain_admin.get_account(0))
@@ -201,18 +221,20 @@ if __name__ == '__main__':
         mode = Mode_SAVE
 
     if args.function.lower() == "Endorse_Trust".lower():
-        plt_endorse_trust(Mode_SAVE)
+        plt_endorse_trust(mode)
     elif args.function.lower() == "Revoke_Trust".lower():
-        plt_revoke_trust(Mode_SAVE)
+        plt_revoke_trust(mode)
     elif args.function.lower() == "Add_Firmware".lower():
-        plt_add_firmware_cost(Mode_SAVE)
+        plt_add_firmware_cost(mode)
     elif args.function.lower() == "Add_Firmware_Description".lower():
-        plt_add_firmware_variable_description(Mode_SAVE)
+        plt_add_firmware_variable_description(mode)
+    elif args.function.lower() == "POW".lower():
+        plt_pow_cost(mode)
     elif args.function.lower() == "all".lower():
-        plt_endorse_trust(Mode_SAVE)
-        plt_revoke_trust(Mode_SAVE)
-        plt_add_firmware_cost(Mode_SAVE)
-        #plt_add_firmware_variable_description(Mode_SAVE)
+        plt_endorse_trust(mode)
+        plt_revoke_trust(mode)
+        plt_add_firmware_cost(mode)
+        #plt_add_firmware_variable_description(mode)
     else:
         print("Wrong commanding line arguments provide --function should have one the following values:\n"+
              "1. Endorse Trust\n"+

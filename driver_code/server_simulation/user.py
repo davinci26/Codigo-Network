@@ -28,6 +28,7 @@ def make_simulation(size):
 
     for i, thread in enumerate(thread_list):
         try:
+            #TODO: Add a random delay, and also keep track which thread is executed first
             thread.start()
         except:
             print ("Error: unable to start thread - reached thread {}".format(i))
