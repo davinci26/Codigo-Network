@@ -49,7 +49,7 @@ def pow_plotter(mode, difficulty,attempts,diff_err,attempts_error,exp_size):
     #plt.locator_params(nbins=12)
     x = np.arange(1,exp_size+1)
     plt.errorbar(x,attempts,yerr=attempts_error,fmt='o')
-    plt.xticks(np.arange(1, 4, step=1))
+    plt.xticks(np.arange(1, 5, step=1))
     plt.xlabel('Firmware Added')
     plt.ylabel('Sha3 Computations')
     plt.subplot(212)
@@ -110,17 +110,16 @@ def plt_hops_vs_gas(mode):
                                                        blockchain_admin.get_account(0))
     print(tt) 
 
-
 def plt_pow_cost(mode):
     exp_size = 20
     attempts_per_exp = 3
     difficulty = np.zeros((exp_size,attempts_per_exp))
     attempts = np.zeros((exp_size,attempts_per_exp))
-    for ii in range(0,exp_size+1):
+    for ii in range(0,exp_size):
         cc = Contract('contracts/firmware_repo.sol','FirmwareRepo', m_web3, verbose=False)
         cc.publish(blockchain_admin.get_account(0))
         print("========= Experiment {}/{} =========".format(ii,exp_size))
-        for i in range(0,attempts_per_exp+1):
+        for i in range(0,attempts_per_exp):
             current_gas = 0
             pow_found = False
             nonce = 1

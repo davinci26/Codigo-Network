@@ -10,11 +10,8 @@ save_dir = './evaluation_scripts/Plots/'
 def parse_single_line(line, filepath):
     d = json.loads(line)
     users = int(d['Users'])
-    if users == len(d['Results']) or users - 1 == len(d['Results']):
-        return d['Users'], d['Avg_Time'],d['Std_Time'], np.max(d['Results']),np.min(d['Results']),d['Results']
-    else:
-        pass
-        #print("Simulation with {} Users failed at {} \n Results length: {}".format(users,filepath,len(d['Results'])))
+    #if users == len(d['Results']) or users - 1 == len(d['Results']):
+    return d['Users'], d['Avg_Time'],d['Std_Time'], np.max(d['Results']),np.min(d['Results']),d['Results']
 
 def parse_file(filepath):
     user_no = []
@@ -35,6 +32,7 @@ def parse_file(filepath):
                 delay_min.append(res[4])
                 results.append(res[5])
             line = fp.readline()
+    print(user_no)
     return user_no, delay_avg, delay_std, delay_max, delay_min, results
 
 
