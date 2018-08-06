@@ -27,20 +27,16 @@ def make_simulation(size):
 
     for i, thread in enumerate(thread_list):
         try:
-            #TODO: Add a random delay, and also keep track which thread is executed first
             thread.start()
         except:
             print ("Error: unable to start thread - reached thread {}".format(i))
             size = i
 
-    for k in range(0,size):
-        thread_list[k].join()
-
 def parse_results(results,thread_no):
     result_json = {'Date-time': now.strftime("%Y-%m-%d %H%M"),
                 'Users': thread_no,
-                'Avg Time': np.mean(results),
-                'Std Time': np.std(results),
+                'Avg_Time': np.mean(results),
+                'Std_Time': np.std(results),
                 'Results': results }
     with open(filepath, 'a+') as dataf:
         json.dump(result_json, dataf)

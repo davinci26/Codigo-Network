@@ -46,7 +46,6 @@ def eth_plotter_format(mode,tx_gas,x_ticks,x_label,filename):
 def pow_plotter(mode, difficulty,attempts,diff_err,attempts_error,exp_size):
     fig = plt.figure(1)
     plt.subplot(211)
-    #plt.locator_params(nbins=12)
     x = np.arange(1,exp_size+1)
     plt.errorbar(x,attempts,yerr=attempts_error,fmt='o')
     plt.xticks(np.arange(1, 5, step=1))
@@ -54,7 +53,7 @@ def pow_plotter(mode, difficulty,attempts,diff_err,attempts_error,exp_size):
     plt.ylabel('Sha3 Computations')
     plt.subplot(212)
     plt.scatter(x,difficulty)
-    plt.xticks(np.arange(1, 4, step=1))
+    plt.xticks(np.arange(1, 5, step=1))
     plt.xlabel('Firmware Added')
     plt.ylabel('PoW Target')
     if mode == Mode_SHOW:
@@ -112,7 +111,7 @@ def plt_hops_vs_gas(mode):
 
 def plt_pow_cost(mode):
     exp_size = 20
-    attempts_per_exp = 3
+    attempts_per_exp = 2
     difficulty = np.zeros((exp_size,attempts_per_exp))
     attempts = np.zeros((exp_size,attempts_per_exp))
     for ii in range(0,exp_size):

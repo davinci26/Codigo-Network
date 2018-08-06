@@ -7,10 +7,11 @@ import argparse
 
 save_dir = './evaluation_scripts/Plots/'
 
-def parse_single_line(line, filepath):
+def parse_single_line(line, filepath, prv_users):
     d = json.loads(line)
     users = int(d['Users'])
-    #if users == len(d['Results']) or users - 1 == len(d['Results']):
+    if prv_users and users - prv_users < 4:
+        return
     return d['Users'], d['Avg_Time'],d['Std_Time'], np.max(d['Results']),np.min(d['Results']),d['Results']
 
 def parse_file(filepath):
@@ -20,11 +21,13 @@ def parse_file(filepath):
     delay_max = []
     delay_min = []
     results = []
+    prv_users = None
     with open(filepath) as fp:  
         line = fp.readline()
         while line:
-            res = parse_single_line(line,filepath)
+            res = parse_single_line(line,filepath,prv_users)
             if res is not None:
+                prv_users = res[0]
                 user_no.append(res[0])
                 delay_avg.append(res[1])
                 delay_std.append(res[2])
@@ -34,7 +37,6 @@ def parse_file(filepath):
             line = fp.readline()
     print(user_no)
     return user_no, delay_avg, delay_std, delay_max, delay_min, results
-
 
 def plot(filepath,label,colour_,limit):
     user_no, delay_avg, delay_std, delay_max, delay_min,_ = parse_file(filepath)
@@ -46,6 +48,7 @@ def plot(filepath,label,colour_,limit):
                      delay_min[:limit],
                      color =colour_,
                      alpha=0.2 )
+    plt.locator_params(nbins=14)
     plt.xlabel('Number of Nodes')
     plt.ylabel('Average delay[sec]')
     plt.xlim(0,limit)
@@ -59,7 +62,7 @@ def statistics(filepath):
 
 
 ipfs_path = './evaluation_scripts/datasets/ipfs_results.json'
-server_path = './evaluation_scripts/datasets/server_results.txt'
+server_path = './evaluation_scripts/datasets/server_results_new.json'
 bittorent_path = './evaluation_scripts/datasets/bittorent_results.json'
 
 # USAGE: ./evaluation_scripts/results_parser.py -o ipfs-vs-BitTorrent -IPFS -BitTorrent -save
@@ -69,7 +72,7 @@ if __name__ == '__main__':
                         help="Save output to the specified directory")
     parser.add_argument('-IPFS', action='store_true', default = False,
                     help='Show IPFS performance')
-    parser.add_argument('-user_limit', type=int, nargs='?', default = 150,
+    parser.add_argument('-user_limit', type=int, nargs='?', default = 120,
                     help='Limit number of users')
     parser.add_argument('-BitTorrent', action='store_true', default = False,
                     help='Show BitTorrent performance') 
