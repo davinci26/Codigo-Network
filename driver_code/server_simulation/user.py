@@ -31,6 +31,10 @@ def make_simulation(size):
         except:
             print ("Error: unable to start thread - reached thread {}".format(i))
             size = i
+            
+    for i in range(0,i):
+        thread_list[i].join()
+
 
 def parse_results(results,thread_no):
     result_json = {'Date-time': now.strftime("%Y-%m-%d %H%M"),

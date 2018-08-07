@@ -12,6 +12,9 @@ def parse_single_line(line, filepath, prv_users):
     users = int(d['Users'])
     if prv_users and users - prv_users < 4:
         return
+    if users > 110:
+        return
+
     return d['Users'], d['Avg_Time'],d['Std_Time'], np.max(d['Results']),np.min(d['Results']),d['Results']
 
 def parse_file(filepath):
