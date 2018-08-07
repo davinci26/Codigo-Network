@@ -15,11 +15,14 @@ user_id = []
 
 # Define a function for the thread
 def make_request(id):
+    print("I was here")
     start = time.time()
     r = requests.post("http://127.0.0.1:8020/test/")
     end = time.time()
+    lock.acquire()
     results.append(end-start)
     user_id.append(id)
+    lock.release()
 
 def make_simulation(size):
     # Create two threads as follows
