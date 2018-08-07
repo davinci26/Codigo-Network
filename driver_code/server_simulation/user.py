@@ -11,6 +11,8 @@ import json
 results = []
 user_id = []
 
+
+
 # Define a function for the thread
 def make_request(id):
     start = time.time()
@@ -31,7 +33,7 @@ def make_simulation(size):
         except:
             print ("Error: unable to start thread - reached thread {}".format(i))
             size = i
-            
+
     for i in range(0,i):
         thread_list[i].join()
 
@@ -47,13 +49,14 @@ def parse_results(results,thread_no):
         dataf.write('\n')
 
 if __name__ == '__main__':
+
     parser = argparse.ArgumentParser(description='Command Line Interface')
     parser.add_argument('--Threads', type=int, nargs='?',
                         help='Max number of users to spawn')
     parser.add_argument('--Increment', type=int, nargs='?',
                         help='User increment')
-
     args = parser.parse_args()
+    print(requests.get("http://127.0.0.1:8020/").text)
     filepath = './evaluation_scripts/datasets/server_results_new.json'  
     for thread_no in range(1,args.Threads+1, args.Increment):
         make_simulation(thread_no)
