@@ -7,6 +7,12 @@ import argparse
 
 save_dir = './evaluation_scripts/Plots/'
 
+def linear_reg(xx,yy):
+    A = np.vstack([xx, np.ones(len(xx))]).T
+    m, c = np.linalg.lstsq(A, yy)[0]
+    y_fit = m*np.array(xx).astype(float) + c
+    return y_fit
+
 def parse_single_line(line, filepath, prv_users):
     d = json.loads(line)
     users = int(d['Users'])
@@ -41,11 +47,16 @@ def parse_file(filepath):
     print(user_no)
     return user_no, delay_avg, delay_std, delay_max, delay_min, results
 
-def plot(filepath,label,colour_,limit):
+def plot(filepath,label,colour_,limit, trendline):
     user_no, delay_avg, delay_std, delay_max, delay_min,_ = parse_file(filepath)
-    plt.plot(user_no[:limit], delay_avg[:limit],'o--', color=colour_, label=label + " Average delay",ms=3) #, yerr = delay_std, fmt='o' )
-    plt.plot(user_no[:limit], delay_max[:limit],'--', color=colour_,  label=label + " Max delay",alpha=0.3) 
-    plt.plot(user_no[:limit], delay_min[:limit],'--', color=colour_,label=label + " Min delay",alpha=0.3) 
+    if trendline:
+        y_trendline = linear_reg(user_no,delay_avg)
+        print(y_trendline)
+        plt.plot(user_no, y_trendline,'-', color=colour_, alpha=0.2, label= label + " Trendline")
+
+    plt.plot(user_no[:limit], delay_avg[:limit], 'o--', color=colour_, label=label + " Average delay",ms=3) #, yerr = delay_std, fmt='o' )
+    plt.plot(user_no[:limit], delay_max[:limit], '--',  color=colour_, label=label + " Max delay",alpha=0.3) 
+    plt.plot(user_no[:limit], delay_min[:limit], '--',  color=colour_, label=label + " Min delay",alpha=0.3) 
     plt.fill_between(user_no[:limit],
                      delay_max[:limit],
                      delay_min[:limit],
@@ -54,6 +65,7 @@ def plot(filepath,label,colour_,limit):
     plt.locator_params(nbins=14)
     plt.xlabel('Number of Nodes')
     plt.ylabel('Average delay[sec]')
+    print(type(limit))
     plt.xlim(0,limit)
 
 
@@ -65,14 +77,20 @@ def statistics(filepath):
 
 
 ipfs_path = './evaluation_scripts/datasets/ipfs_results.json'
-server_path = './evaluation_scripts/datasets/server_results_new.json'
+server_path = './evaluation_scripts/datasets/server_results_single.json'
+server_path_multi = './evaluation_scripts/datasets/server_results_multi.json'
 bittorent_path = './evaluation_scripts/datasets/bittorent_results.json'
+ipfs_with_delay = './evaluation_scripts/datasets/ipfs_duplicates_lat.json'
 
-# USAGE: ./evaluation_scripts/results_parser.py -o ipfs-vs-BitTorrent -IPFS -BitTorrent -save
+# USAGE: ./evaluation_scripts/results_parser.py -o ipfs-vs-BitTorrent -IPFS -BitTorrent
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Command Line Interface')
     parser.add_argument('-o', type=str, nargs='?',
                         help="Save output to the specified directory")
+    parser.add_argument('-d',action='store_true', default = False,
+                        help="Show simulation with lattency added")
+    parser.add_argument('-trend',action='store_true', default = False,
+                        help="Show performance trendline") 
     parser.add_argument('-IPFS', action='store_true', default = False,
                     help='Show IPFS performance')
     parser.add_argument('-user_limit', type=int, nargs='?', default = 120,
@@ -87,15 +105,18 @@ if __name__ == '__main__':
     fig, ax1 = plt.subplots()
 
     if args.IPFS:
-        plot(ipfs_path, "IPFS",'blue',args.user_limit)
+        plot(ipfs_path, "IPFS",'blue',args.user_limit, args.trend)
+        if args.d:
+            plot(ipfs_with_delay, "IPFS Latency",'green',args.user_limit, args.trend)
         if args.statistics:
             statistics(ipfs_path)
     if args.BitTorrent:
-        plot(bittorent_path,"BitTorrent",'orange',args.user_limit)
+        plot(bittorent_path,"BitTorrent",'orange',args.user_limit, args.trend)
         if args.statistics:
             statistics(bittorent_path)
     if args.client_server:
-        plot(server_path,"Client Server",'red',args.user_limit)
+        plot(server_path,"Client Server",'red',args.user_limit, args.trend)
+        #plot(server_path_multi,"Client Server Multithreaded",'green', args.user_limit)
 
     plt.legend()
     if args.o != None:

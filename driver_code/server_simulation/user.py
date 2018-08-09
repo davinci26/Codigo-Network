@@ -2,7 +2,6 @@
 import requests
 import threading
 import time
-import threading
 import argparse
 import datetime
 import numpy as np
@@ -15,7 +14,6 @@ user_id = []
 
 # Define a function for the thread
 def make_request(id):
-    print("I was here")
     start = time.time()
     r = requests.post("http://127.0.0.1:8020/test/")
     end = time.time()
@@ -37,8 +35,8 @@ def make_simulation(size):
             print ("Error: unable to start thread - reached thread {}".format(i))
             size = i
 
-    for i in range(0,i):
-        thread_list[i].join()
+    for thread in thread_list:
+        thread.join()
 
 
 def parse_results(results,thread_no):
