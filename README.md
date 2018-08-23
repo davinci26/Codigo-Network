@@ -33,3 +33,7 @@ Código network architecture diagram. Users are arranged on a graph based on the
 
 ## How to contribute ##
 Any comments/suggestions/improvements are highly appreciated. However, until the project is submitted for grading no pull requests will be accepted.
+
+## Why is it called Codigo-Network ##
+For the coolness factor of having a spanish name :) 
+
