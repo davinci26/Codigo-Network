@@ -51,7 +51,6 @@ def plot(filepath,label,colour_,limit, trendline):
     user_no, delay_avg, delay_std, delay_max, delay_min,_ = parse_file(filepath)
     if trendline:
         y_trendline = linear_reg(user_no,delay_avg)
-        print(y_trendline)
         plt.plot(user_no, y_trendline,'-', color=colour_, alpha=0.2, label= label + " Trendline")
 
     plt.plot(user_no[:limit], delay_avg[:limit], 'o--', color=colour_, label=label + " Average delay",ms=3) #, yerr = delay_std, fmt='o' )
