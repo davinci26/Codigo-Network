@@ -1,3 +1,8 @@
+/*
+The code here is not mine.
+Credits should be given to: https://medium.com/@ChrisLundkvist/exploring-simpler-ethereum-multisig-contracts-b71020c19037
+*/
+
 pragma solidity ^0.4.23;
 contract SimpleMultiSig {
 
