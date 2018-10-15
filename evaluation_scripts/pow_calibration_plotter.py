@@ -19,7 +19,7 @@ std = []
 difficulty = []
 x = np.arange(1,max_it+1)
 for ii in range(0,max_it):
-    print("For ii = {} expetation = {} and Std = {}".format(ii+1,expectation(ii),np.sqrt(variance(ii))))
+    print("For ii = {} expectation = {} and Std = {}".format(ii+1,expectation(ii),np.sqrt(variance(ii))))
     mean.append(expectation(ii))
     std.append(np.sqrt(variance(ii)))
     difficulty.append(10.**77/(50.**ii))
