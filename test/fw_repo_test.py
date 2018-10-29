@@ -2,6 +2,7 @@ import unittest
 import time
 import sys
 sys.path.append("lib/")
+from Compact_Contract import *
 from Contract import *
 from bc_admin import *
 from ipfs_admin import *
@@ -118,7 +119,7 @@ class TestFwRepo(unittest.TestCase):
         web_of_trust_addr = cc.get_def_instance().functions.trust_address().call()
         print("Web of Trust Address: {}".format(web_of_trust_addr))
         # Initialize web of trust contract
-        web_of_trust = Contract('contracts/webTrust.sol','Web_Of_Trust',m_web3,verbose=False, address_ = web_of_trust_addr)
+        web_of_trust = Compact_Contract('working_dir/web_trust_abi','Web_Of_Trust',m_web3,web_of_trust_addr, verbose=False) 
         # Test that web of trust works
         print("Web of Trust Version: {} ".format(web_of_trust.get_def_instance().functions.get_version().call()))
         # Create Developer node with PK(1)
@@ -168,7 +169,7 @@ class TestFwRepo(unittest.TestCase):
         web_of_trust_addr = cc.get_def_instance().functions.trust_address().call()
         print("Web of Trust Address: {}".format(web_of_trust_addr))
         # Initialize web of trust contract
-        web_of_trust = Contract('contracts/webTrust.sol','Web_Of_Trust',m_web3,verbose=False, address_ = web_of_trust_addr)
+        web_of_trust = Compact_Contract('working_dir/web_trust_abi','Web_Of_Trust',m_web3,web_of_trust_addr, verbose=False) 
         # Test that web of trust works
         print("Web of Trust Version: {} ".format(web_of_trust.get_def_instance().functions.get_version().call()))
         # Create User node with PK(0)
@@ -185,7 +186,8 @@ class TestFwRepo(unittest.TestCase):
             fw_dictionary[developer_node.fw.description] = False
             # Endore developer
             user_node.endorse_developer(web_of_trust,blockchain_admin.get_account(i))
-            logging.info("User {} endorsed {}".format(blockchain_admin.get_account(0),blockchain_admin.get_account(i)))   
+            print("User {} endorsed {}".format(blockchain_admin.get_account(0),blockchain_admin.get_account(i)))   
+
         # Pull contracts
         fw_list = user_node.get_mult_trusted_fw_local(web_of_trust)
         for fw in fw_list:
@@ -196,7 +198,7 @@ class TestFwRepo(unittest.TestCase):
 
         # Print Everything for debuging
         for key, value in fw_dictionary.items():
-            print("Value {} Found: {}".format(key[:10],value))
+            print("Firmware with description {}, Found: {}".format(key[:10],value))
 
         # Calculate that everything is found
         flag = True

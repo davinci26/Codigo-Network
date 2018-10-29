@@ -64,6 +64,7 @@ class User_Node(Node):
             except:
                 print("Number of developers: {}".format(i))
                 flag = False
+                continue
             # Calculate how much we trust the developer temp_addr
             trust = web_trust_contract.get_def_instance().functions.hop_to_target(temp_addr,self.node_pk).call()
             print('Trust to developer {} is {}'.format(temp_addr,trust))
